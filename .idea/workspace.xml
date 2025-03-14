@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a57fb937-9c67-4f91-826e-8853fd385b4b" name="Changes" comment="update ReadMe.md">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/Mask-Conditioned-Latent-Space-Diffusion.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/DiffusionEdge-main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ReadMe.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/15.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/17.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/18.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/19.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/20.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/test.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/15.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/17.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/18.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/19.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/20.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/test.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/15.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/17.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/18.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/19.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/20.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/test.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/framework.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/teaser.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/BIPED_sample.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/BIPED_train.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/BSDS_sample.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/BSDS_train.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/NYUD_sample.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/NYUD_train.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/default.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/first_stage_d4.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo_trt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/ddm_const_sde.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/efficientnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/ema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/encoder_decoder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/imagenet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/loss.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/quantization.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/resnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/swin_transformer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/uncond_unet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/vgg.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/wavelet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/wcc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/datasets.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/defaults.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/feature_extractor_base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/feature_extractor_inceptionv3.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/generative_model_base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/helpers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/interpolate_compat_tensorflow.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/metric.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/metric_fid.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/metric_isc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/metric_kid.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/metric_ppl.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/noise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/registry.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/sample_similarity_base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/sample_similarity_lpips.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metrics/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirement.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample_cond_ldm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/ade20k.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_coco.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_open_images.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/coco.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/objects_bbox.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/objects_center_points.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/custom.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/faceshq.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/helper_types.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/image_transforms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/imagenet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/open_images_helper.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/sflckr.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/data/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/autoencoder/lpips/vgg.pth" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/diffusionmodules/model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/discriminator/model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/losses/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/losses/lpips.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/losses/segmentation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/losses/util.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/losses/vqperceptual.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/misc/coord.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/util.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/modules/vqvae/quantize.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taming/util.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_cond_ldm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_vae.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/layers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/layerspp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp3.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp4.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp5.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp6.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp7.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp8.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp9.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnv2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/normalization.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_act.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_bias_act.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_bias_act_kernel.cu" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d_kernel.cu" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/unet_pp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/up_or_down_sampling.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unet_plus/utils.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="28060699-c30b-4ede-9209-85735f68592d" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2Yq9BvczrhBrJrAnqPkhU9sG1uZ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.TranMat.executor": "Run",
+    "Python.demo.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/AGF/论文资料/DiffusionEdge/DiffusionEdge-main",
+    "settings.editor.selected.configurable": "vcs.Git"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.TranMat">
+    <configuration name="TranMat" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Mask-Conditioned-Latent-Space-Diffusion" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/TranMat.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="demo" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="Mask-Conditioned-Latent-Space-Diffusion" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/demo.py" />
+      <option name="PARAMETERS" value="--input_dir /media/huang/T7/data/NYUDv2/official_split/test/bathroom --out_dir /media/huang/T7/data/diffusion_edge_weight/DUTS-TR-Image_results --pre_weight /media/huang/T7/data/diffusion_edge_weight/bsds.pt" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="encoder_decoder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Mask-Conditioned-Latent-Space-Diffusion" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/denoising_diffusion_pytorch" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/denoising_diffusion_pytorch/encoder_decoder.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.TranMat" />
+        <item itemvalue="Python.encoder_decoder" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a57fb937-9c67-4f91-826e-8853fd385b4b" name="Changes" comment="" />
+      <created>1701242110968</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701242110968</updated>
+    </task>
+    <task id="LOCAL-00011" summary="first commit">
+      <created>1701425247815</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701425247815</updated>
+    </task>
+    <task id="LOCAL-00012" summary="first commit">
+      <created>1701425757157</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1701425757157</updated>
+    </task>
+    <task id="LOCAL-00013" summary="first commit">
+      <created>1701427752846</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1701427752846</updated>
+    </task>
+    <task id="LOCAL-00014" summary="update first_stage_d4.yaml">
+      <created>1701615713858</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1701615713858</updated>
+    </task>
+    <task id="LOCAL-00015" summary="update ReadMe">
+      <created>1701622877335</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1701622877335</updated>
+    </task>
+    <task id="LOCAL-00016" summary="update ReadMe">
+      <created>1701623276969</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1701623276969</updated>
+    </task>
+    <task id="LOCAL-00017" summary="update ReadMe">
+      <created>1701623399431</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1701623399431</updated>
+    </task>
+    <task id="LOCAL-00018" summary="update config">
+      <created>1701623619250</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1701623619250</updated>
+    </task>
+    <task id="LOCAL-00019" summary="update ReadMe">
+      <created>1701623936739</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1701623936739</updated>
+    </task>
+    <task id="LOCAL-00020" summary="update ReadMe">
+      <created>1701624476117</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1701624476117</updated>
+    </task>
+    <task id="LOCAL-00021" summary="update ReadMe">
+      <created>1701680742231</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1701680742231</updated>
+    </task>
+    <task id="LOCAL-00022" summary="update ReadMe">
+      <created>1701681987098</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1701681987098</updated>
+    </task>
+    <task id="LOCAL-00023" summary="update ReadMe">
+      <created>1701842321239</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1701842321239</updated>
+    </task>
+    <task id="LOCAL-00024" summary="update ReadMe">
+      <created>1701842405304</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1701842405304</updated>
+    </task>
+    <task id="LOCAL-00025" summary="update ReadMe">
+      <created>1701922822611</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1701922822611</updated>
+    </task>
+    <task id="LOCAL-00026" summary="update ReadMe">
+      <created>1701922982892</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1701922982892</updated>
+    </task>
+    <task id="LOCAL-00027" summary="update ReadMe">
+      <created>1701923181542</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1701923181542</updated>
+    </task>
+    <task id="LOCAL-00028" summary="update ReadMe">
+      <created>1702108801660</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1702108801660</updated>
+    </task>
+    <task id="LOCAL-00029" summary="update ReadMe">
+      <created>1702204163648</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1702204163648</updated>
+    </task>
+    <task id="LOCAL-00030" summary="update ReadMe">
+      <created>1702625567267</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1702625567267</updated>
+    </task>
+    <task id="LOCAL-00031" summary="update ReadMe">
+      <created>1704521369332</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1704521369332</updated>
+    </task>
+    <task id="LOCAL-00032" summary="update ReadMe">
+      <created>1704717622852</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1704717622852</updated>
+    </task>
+    <task id="LOCAL-00033" summary="update ReadMe">
+      <created>1704866094434</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1704866094434</updated>
+    </task>
+    <task id="LOCAL-00034" summary="update demo.py">
+      <created>1704875149259</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1704875149259</updated>
+    </task>
+    <task id="LOCAL-00035" summary="update ReadMe.md">
+      <created>1704877254832</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1704877254832</updated>
+    </task>
+    <task id="LOCAL-00036" summary="update ReadMe.md">
+      <created>1705485954979</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1705485954979</updated>
+    </task>
+    <task id="LOCAL-00037" summary="fix device bug">
+      <created>1705588702494</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1705588702494</updated>
+    </task>
+    <task id="LOCAL-00038" summary="fix sample_cond_ldm.py bug">
+      <created>1705654822496</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1705654822496</updated>
+    </task>
+    <task id="LOCAL-00039" summary="update ReadMe">
+      <created>1710695470537</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1710695470537</updated>
+    </task>
+    <task id="LOCAL-00040" summary="update a real-time model">
+      <created>1710859000425</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1710859000425</updated>
+    </task>
+    <task id="LOCAL-00041" summary="update ReadMe">
+      <created>1710859177569</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1710859177569</updated>
+    </task>
+    <task id="LOCAL-00042" summary="update ReadMe">
+      <created>1710938236653</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1710938236653</updated>
+    </task>
+    <task id="LOCAL-00043" summary="fix demo_trt.py bug">
+      <created>1711038159111</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1711038159111</updated>
+    </task>
+    <task id="LOCAL-00044" summary="update ReadMe.md">
+      <created>1711038296274</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1711038296274</updated>
+    </task>
+    <task id="LOCAL-00045" summary="update ReadMe.md">
+      <created>1711038949578</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1711038949578</updated>
+    </task>
+    <task id="LOCAL-00046" summary="update ReadMe.md">
+      <created>1711436076830</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1711436076830</updated>
+    </task>
+    <task id="LOCAL-00047" summary="update ReadMe.md">
+      <created>1712066717404</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1712066717404</updated>
+    </task>
+    <task id="LOCAL-00048" summary="update ReadMe.md">
+      <created>1713070197726</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1713070197726</updated>
+    </task>
+    <task id="LOCAL-00049" summary="update ReadMe.md">
+      <created>1713771637826</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1713771637826</updated>
+    </task>
+    <task id="LOCAL-00050" summary="update ReadMe.md">
+      <created>1715094934171</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1715094934172</updated>
+    </task>
+    <task id="LOCAL-00051" summary="update ReadMe.md">
+      <created>1716191666653</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1716191666653</updated>
+    </task>
+    <task id="LOCAL-00052" summary="update ReadMe.md">
+      <created>1717593347693</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1717593347693</updated>
+    </task>
+    <task id="LOCAL-00053" summary="update ReadMe.md">
+      <created>1718086733918</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1718086733918</updated>
+    </task>
+    <task id="LOCAL-00054" summary="update ReadMe.md">
+      <created>1719220052704</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1719220052704</updated>
+    </task>
+    <task id="LOCAL-00055" summary="update ReadMe.md">
+      <created>1720173738055</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1720173738055</updated>
+    </task>
+    <task id="LOCAL-00056" summary="update ReadMe.md">
+      <created>1720791101986</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1720791101987</updated>
+    </task>
+    <task id="LOCAL-00057" summary="update ReadMe.md">
+      <created>1721376195567</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1721376195567</updated>
+    </task>
+    <task id="LOCAL-00058" summary="update ReadMe.md">
+      <created>1722266190213</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1722266190213</updated>
+    </task>
+    <task id="LOCAL-00059" summary="update ReadMe.md">
+      <created>1724331316050</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1724331316050</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <MESSAGE value="update first_stage_d4.yaml" />
+    <MESSAGE value="update config" />
+    <MESSAGE value="update demo.py" />
+    <MESSAGE value="fix device bug" />
+    <MESSAGE value="fix sample_cond_ldm.py bug" />
+    <MESSAGE value="update a real-time model" />
+    <MESSAGE value="update ReadMe" />
+    <MESSAGE value="fix demo_trt.py bug" />
+    <MESSAGE value="update ReadMe.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="update ReadMe.md" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/demo.py</url>
+          <line>193</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/denoising_diffusion_pytorch/encoder_decoder.py</url>
+          <line>1074</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train_cond_ldm.py</url>
+          <line>37</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/demo.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/demo.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/denoising_diffusion_pytorch/data.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/taming/modules/diffusionmodules/model.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
