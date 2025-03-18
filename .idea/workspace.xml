@@ -5,192 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a57fb937-9c67-4f91-826e-8853fd385b4b" name="Changes" comment="update ReadMe.md">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/Mask-Conditioned-Latent-Space-Diffusion.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/DiffusionEdge-main.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DiffusionEdge-main/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ReadMe.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/10.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/11.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/12.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/13.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/14.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/15.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/17.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/18.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/19.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/20.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/2018/test.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/10.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/11.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/12.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/13.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/14.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/15.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/17.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/18.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/19.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/20.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/3063/test.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/10.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/11.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/12.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/13.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/14.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/15.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/17.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/18.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/19.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/20.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/denoising_process/5096/test.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/framework.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/teaser.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/BIPED_sample.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/BIPED_train.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/BSDS_sample.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/BSDS_train.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/NYUD_sample.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/NYUD_train.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/default.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/first_stage_d4.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo_trt.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/ddm_const_sde.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/efficientnet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/ema.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/encoder_decoder.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/imagenet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/loss.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/quantization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/resnet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/swin_transformer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/uncond_unet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/vgg.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/wavelet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/wcc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/defaults.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/feature_extractor_base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/feature_extractor_inceptionv3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/generative_model_base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/helpers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/interpolate_compat_tensorflow.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/metric.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/metric_fid.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/metric_isc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/metric_kid.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/metric_ppl.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/noise.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/registry.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/sample_similarity_base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/sample_similarity_lpips.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metrics/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirement.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sample_cond_ldm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/ade20k.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_coco.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_dataset.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/annotated_objects_open_images.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/coco.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/objects_bbox.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/objects_center_points.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/conditional_builder/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/custom.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/faceshq.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/helper_types.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/image_transforms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/imagenet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/open_images_helper.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/sflckr.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/data/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/autoencoder/lpips/vgg.pth" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/diffusionmodules/model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/discriminator/model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/losses/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/losses/lpips.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/losses/segmentation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/losses/util.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/losses/vqperceptual.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/misc/coord.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/util.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/modules/vqvae/quantize.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taming/util.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_cond_ldm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_vae.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ema.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/layers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/layerspp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp4.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp5.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp6.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp7.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp8.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnpp9.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/ncsnv2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/normalization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_act.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_bias_act.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/fused_bias_act_kernel.cu" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/op/upfirdn2d_kernel.cu" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/unet_pp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/up_or_down_sampling.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unet_plus/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" beforeDir="false" afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,9 +23,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Soodda"
+  }
+}]]></component>
   <component name="GithubDefaultAccount">
-    <option name="defaultAccountId" value="28060699-c30b-4ede-9209-85735f68592d" />
+    <option name="defaultAccountId" value="2d3d7ce5-53fc-47cf-bc30-bc0652b994f8" />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Soodda/DiffusionEdge.git",
+    "accountId": "2d3d7ce5-53fc-47cf-bc30-bc0652b994f8"
+  }
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -224,6 +52,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.Test_Unet_Cond.executor": "Run",
     "Python.TranMat.executor": "Run",
     "Python.demo.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -232,7 +61,7 @@
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "E:/AGF/论文资料/DiffusionEdge/DiffusionEdge-main",
-    "settings.editor.selected.configurable": "vcs.Git"
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -240,7 +69,29 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.TranMat">
+  <component name="RunManager" selected="Python.Test_Unet_Cond">
+    <configuration name="Test_Unet_Cond" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Mask-Conditioned-Latent-Space-Diffusion" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Test_Unet_Cond.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="TranMat" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Mask-Conditioned-Latent-Space-Diffusion" />
       <option name="ENV_FILES" value="" />
@@ -309,6 +160,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Test_Unet_Cond" />
         <item itemvalue="Python.TranMat" />
         <item itemvalue="Python.encoder_decoder" />
       </list>
@@ -673,7 +525,7 @@
       <option name="project" value="LOCAL" />
       <updated>1724331316050</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

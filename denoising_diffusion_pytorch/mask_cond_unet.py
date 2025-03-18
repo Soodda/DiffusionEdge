@@ -455,6 +455,8 @@ class BlockFFT(nn.Module):
 
     def forward(self, x, scale_shift = None):
         B, C, H, W = x.shape
+        # print("Input shape:", x.shape)#1,512,10,10
+        # print("Complex weight shape:", self.complex_weight.shape)#512,10,6,2
         x = torch.fft.rfft2(x, dim=(2, 3), norm='ortho')
         x = x * torch.view_as_complex(self.complex_weight)
         x = torch.fft.irfft2(x, s=(H, W), dim=(2, 3), norm='ortho')
@@ -601,6 +603,23 @@ class Attention(nn.Module):
         return self.to_out(out)
 
 
+class ColorOpponency(nn.Module):
+    def __init__(self):
+        super(ColorOpponency, self).__init__()
+        # 定义颜色拮抗变换的权重矩阵
+        self.weight = torch.tensor([
+            [0.299, 0.587, 0.114],    # Luminance (亮度)
+            [0.5, -0.5, 0],           # Red-Green (红-绿)
+            [-0.169, -0.331, 0.5]     # Blue-Yellow (蓝-黄)
+        ], dtype=torch.float32)
+        self.weight = self.weight.unsqueeze(-1).unsqueeze(-1)  # 扩展为卷积核形状 (3, 3, 1, 1)
+        self.bias = torch.zeros(3)  # 偏置设为0
+
+    def forward(self, x):
+        # x 的形状: (batch_size, 3, H, W)
+        # 使用 1x1 卷积实现线性变换
+        return F.conv2d(x, self.weight.to(x.device), self.bias.to(x.device))
+
 class ConditionEncoder(nn.Module):
     #CNN Resnet下采样
     def __init__(self,
@@ -609,10 +628,15 @@ class ConditionEncoder(nn.Module):
                  in_dim=1,
                  out_dim=64):
         super(ConditionEncoder, self).__init__()
+
+        self.color_opponency = ColorOpponency()
+        self.color_adjust = nn.Conv2d(3, in_dim, kernel_size=1)
+
         self.init_conv = nn.Sequential(
                             nn.Conv2d(in_dim, dim, kernel_size=3, stride=1, padding=1),
                             nn.GroupNorm(num_groups=min(dim // 4, 8), num_channels=dim),
         )
+        #下采样
         self.num_resolutions = len(down_dim_mults)
         self.downs = nn.ModuleList()
         in_mults = (1,) + tuple(down_dim_mults[:-1])
@@ -623,16 +647,25 @@ class ConditionEncoder(nn.Module):
             block_out = out_dims[i_level]
             self.downs.append(ResnetDownsampleBlock(dim=block_in,
                                      dim_out=block_out))
+        #输出卷积层
         if self.num_resolutions < 1:
             self.out_conv = nn.Conv2d(dim, out_dim, 1)
         else:
             self.out_conv = nn.Conv2d(out_dims[-1], out_dim, 1)
 
     def forward(self, x):
-        x = self.init_conv(x)
+        # 输入 x 的形状: (batch_size, 3, H, W)
+        # 颜色拮抗变换
+        x_color = self.color_opponency(x)  # 输出形状: (batch_size, 3, H, W)
+        # 调整通道数
+        x_color = self.color_adjust(x_color)  # 输出形状: (batch_size, in_dim, H, W)
+        # 初始卷积
+        x = self.init_conv(x_color)  # 输出形状: (batch_size, dim, H, W)
+        # 下采样
         for down_layer in self.downs:
             x = down_layer(x)
-        x = self.out_conv(x)
+        # 输出卷积
+        x = self.out_conv(x)  # 输出形状: (batch_size, out_dim, H', W')
         return x
 
 
@@ -681,6 +714,10 @@ class Unet(nn.Module):
         # )
         # self.init_conv_mask = ConditionEncoder(down_dim_mults=cond_dim_mults, dim=cond_dim,
         #                                        in_dim=cond_in_dim, out_dim=init_dim)
+
+        #颜色拮抗模块
+        self.color_opponency = ColorOpponency()
+        self.color_adjust = nn.Conv2d(3, 3, kernel_size=1)
 
         if cfg.cond_net == 'effnet':
             f_condnet = 48
@@ -904,9 +941,14 @@ class Unet(nn.Module):
         x_clone = x.clone()
         x = c_in * x
         # mask = torch.cat([], dim=1)
-        hm = self.init_conv_mask(mask)
+        #颜色拮抗处理
+        mask_color = self.color_opponency(mask) # 打印颜色拮抗后的形状 [1,3,320,320]
+        mask_color = self.color_adjust(mask_color)# 打印通道调整后的形状 [1,1,320,320]
+        hm = self.init_conv_mask(mask_color)
+        # hm = self.init_conv_mask(mask)
         # if self.cond_pe:
         #     m = self.cond_pos_embedding(m)
+        #X[1,3,80,80]-->[1,128,80,80]
         x = self.init_conv(torch.cat([x, F.interpolate(hm[0], size=x.shape[-2:], mode="bilinear")], dim=1))
         r = x.clone()
 
@@ -922,6 +964,7 @@ class Unet(nn.Module):
             hm2.append(hm[i].clone())
         # hm = []
         # hm2 = []
+        #[1, 128, 40, 40]-》[1, 256, 20, 20]-》[1, 512, 10, 10]-》[1, 512, 10, 10]
         for i, ((block1, block2, attn, downsample), relation_layer) \
                 in enumerate(zip(self.downs, self.relation_layers_down)):
             x = block1(x, t)
@@ -946,6 +989,7 @@ class Unet(nn.Module):
         x = self.mid_block1(x, t)
         x = self.mid_attn(x)
         x = self.mid_block2(x, t)
+        # print("Input before FFt shape:", x.shape)
         x1 = x + self.decouple1(x)
         x2 = x + self.decouple2(x)
 
@@ -996,7 +1040,7 @@ if __name__ == "__main__":
                  window_sizes1=[[8, 8], [4, 4], [2, 2], [1, 1]],
                  window_sizes2=[[8, 8], [4, 4], [2, 2], [1, 1]],
                  cfg=fvcore.common.config.CfgNode({'cond_pe': False, 'input_size': [80, 80],
-                      'cond_feature_size': (32, 128), 'cond_net': 'vgg',
+                      'cond_feature_size': (32, 128), 'cond_net': 'swin',
                       'num_pos_feats': 96})
                  )
     x = torch.rand(1, 1, 80, 80)
