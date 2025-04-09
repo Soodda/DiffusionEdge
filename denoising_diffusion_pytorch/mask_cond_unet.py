@@ -464,6 +464,125 @@ class BlockFFT(nn.Module):
 
         return x
 
+class BlockGabor(nn.Module):
+    def __init__(self, dim, h, w, kernel_size=15, sigma=5.0, lambd=10.0, gamma=0.5):
+        super().__init__()
+        self.dim = dim
+        self.h = h
+        self.w = w
+        self.kernel_size = kernel_size
+        self.sigma = sigma
+        self.lambd = lambd
+        self.gamma = gamma
+
+        # Generate Gabor filters for every 15 degrees
+        self.theta_list = torch.arange(0, math.pi, math.pi / 12)  # 0 to 180 degrees, 15 degrees per step
+        self.num_filters = len(self.theta_list)  # Number of directions
+
+        # Initialize Gabor filters
+        self.gabor_filters = self._create_gabor_filters()
+        self.adjust_conv = nn.Conv2d(dim * self.num_filters, dim, kernel_size=1)
+
+    def _create_gabor_filters(self):
+        """
+        Create a set of Gabor filters for each direction.
+        """
+        filters = []
+        for theta in self.theta_list:
+            gabor_kernel = self._gabor_kernel(theta)
+            filters.append(gabor_kernel)
+        filters = torch.stack(filters, dim=0)  # Shape: (num_filters, 1, kernel_size, kernel_size)
+        filters = filters.squeeze(2)
+        filters = filters.unsqueeze(0)  # Shape: (1, num_filters, 1, kernel_size, kernel_size)
+        filters = filters.repeat(self.dim, 1, 1, 1, 1)  # Shape: (dim, num_filters, 1, kernel_size, kernel_size)
+        filters = filters.view(self.dim * self.num_filters, 1, self.kernel_size,
+                               self.kernel_size)  # Shape: (dim * num_filters, 1, kernel_size, kernel_size)
+        return nn.Parameter(filters, requires_grad=False)
+
+    def _gabor_kernel(self, theta):
+        """
+        Generate a single Gabor kernel for a given theta (direction).
+        """
+        kernel_size = self.kernel_size
+        sigma = self.sigma
+        lambd = self.lambd
+        gamma = self.gamma
+
+        # Create grid
+        x = torch.arange(-kernel_size // 2 + 1, kernel_size // 2 + 1, dtype=torch.float32)
+        y = torch.arange(-kernel_size // 2 + 1, kernel_size // 2 + 1, dtype=torch.float32)
+        y, x = torch.meshgrid(y, x)
+
+        # Rotate coordinates
+        x_theta = x * torch.cos(theta) + y * torch.sin(theta)
+        y_theta = -x * torch.sin(theta) + y * torch.cos(theta)
+
+        # Gabor formula
+        gabor = torch.exp(-(x_theta**2 + gamma**2 * y_theta**2) / (2 * sigma**2)) * torch.cos(2 * math.pi * x_theta / lambd)
+        gabor = gabor.unsqueeze(0).unsqueeze(0)  # Shape: (1, 1, kernel_size, kernel_size)
+        return gabor
+
+    def forward(self, x):
+        B, C, H, W = x.shape
+        # Apply Gabor filters
+        x = x.unsqueeze(1)  # Shape: (B, 1, C, H, W)
+        x = F.conv2d(x.view(B * 1, C, H, W), self.gabor_filters, padding=self.kernel_size // 2, groups=self.dim)
+        x = x.view(B, self.num_filters, C, H, W)  # Shape: (B, num_filters, C, H, W)
+        x = x.permute(0, 2, 1, 3, 4)  # Shape: (B, C, num_filters, H, W)
+        x = x.reshape(B, C * self.num_filters, H, W)  # Shape: (B, C * num_filters, H, W)
+        x = self.adjust_conv(x)
+        return x
+
+
+class EnhancedBlockGabor(nn.Module):
+    def __init__(self, dim, h, w, kernel_size=15, scales=3, orientations=8,
+                 sigma=5.0, lambd=10.0, gamma=0.5):
+        super().__init__()
+        self.dim = dim
+        self.scales = scales
+        self.orientations = orientations
+        self.kernel_size = kernel_size
+
+        self.frequencies = [1.0 / (2 ** s) for s in range(scales)]  # 1.0, 0.5, 0.25
+        self.register_buffer('filters', self._create_complex_filters(sigma, lambd, gamma))
+        self.adjust_conv = nn.Conv2d(dim * scales * orientations, dim, 1)
+        self.norm = nn.InstanceNorm2d(dim)
+
+    def _create_complex_filters(self, sigma, lambd, gamma):
+        """生成多尺度复数Gabor滤波器组"""
+        filters = []
+        coords = torch.arange(-(self.kernel_size // 2), (self.kernel_size // 2) + 1)
+        y, x = torch.meshgrid(coords, coords)
+
+        for scale in range(self.scales):
+            fu = self.frequencies[scale]
+            alpha = fu / gamma
+            beta = fu / (gamma * math.sqrt(2))
+
+            for orient in range(self.orientations):
+                theta = orient * math.pi / self.orientations
+                x_theta = x * math.cos(theta) + y * math.sin(theta)
+                y_theta = -x * math.sin(theta) + y * math.cos(theta)
+                envelope = torch.exp(-(x_theta ** 2 + gamma ** 2 * y_theta ** 2) / (2 * sigma ** 2))
+                carrier = torch.exp(1j * 2 * math.pi * fu * x_theta)
+                kernel = (fu ** 2 / (math.pi * gamma ** 2)) * envelope * carrier
+                filters.append(torch.stack([kernel.real, kernel.imag]))#实部+虚部
+
+        return torch.stack(filters)  # (scales*orientations, 2, kernel_size, kernel_size)
+
+    def forward(self, x):
+        B, C, H, W = x.shape
+        x = x.view(1, -1, H, W)  # 合并批次和通道
+        filters = self.filters.repeat_interleave(C, dim=0)  # (C*S*O, 2, K, K)
+        filters = filters.view(-1, 1, self.kernel_size, self.kernel_size)  # (2*C*S*O, 1, K, K)
+        features = F.conv2d(x, filters, padding=self.kernel_size // 2,
+                            groups=B * C * self.scales * self.orientations * 2)
+        features = features.view(B, C, self.scales, self.orientations, 2, H, W)
+        # 计算幅度特征
+        mag = torch.sqrt(features[..., 0, :, :] ** 2 + features[..., 1, :, :] ** 2)  # (B, C, S, O, H, W)
+        mag = mag.permute(0, 1, 2, 3, 5, 4).reshape(B, -1, H, W)  # (B, C*S*O, H, W)
+        return self.norm(self.adjust_conv(mag))
+
 class ResnetBlock(nn.Module):
     def __init__(self, dim, dim_out, *, time_emb_dim = None, groups = 8):
         super().__init__()
@@ -657,14 +776,11 @@ class ConditionEncoder(nn.Module):
         # 输入 x 的形状: (batch_size, 3, H, W)
         # 颜色拮抗变换
         x_color = self.color_opponency(x)  # 输出形状: (batch_size, 3, H, W)
-        # 调整通道数
         x_color = self.color_adjust(x_color)  # 输出形状: (batch_size, in_dim, H, W)
-        # 初始卷积
         x = self.init_conv(x_color)  # 输出形状: (batch_size, dim, H, W)
-        # 下采样
+        # x = self.init_conv(x)
         for down_layer in self.downs:
             x = down_layer(x)
-        # 输出卷积
         x = self.out_conv(x)  # 输出形状: (batch_size, out_dim, H', W')
         return x
 
@@ -845,11 +961,15 @@ class Unet(nn.Module):
             nn.GroupNorm(num_groups=min(mid_dim // 4, 8), num_channels=mid_dim),
             nn.Conv2d(mid_dim, mid_dim, 3, padding=1),
             BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
+            # BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
+            #            gamma=0.5),
         )
         self.decouple2 = nn.Sequential(
             nn.GroupNorm(num_groups=min(mid_dim // 4, 8), num_channels=mid_dim),
             nn.Conv2d(mid_dim, mid_dim, 3, padding=1),
             BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
+            # BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
+            #            gamma=0.5),
         )
 
         for ind, (dim_in, dim_out) in enumerate(reversed(in_out)):
@@ -942,10 +1062,11 @@ class Unet(nn.Module):
         x = c_in * x
         # mask = torch.cat([], dim=1)
         #颜色拮抗处理
-        mask_color = self.color_opponency(mask) # 打印颜色拮抗后的形状 [1,3,320,320]
-        mask_color = self.color_adjust(mask_color)# 打印通道调整后的形状 [1,1,320,320]
-        hm = self.init_conv_mask(mask_color)
-        # hm = self.init_conv_mask(mask)
+        # mask_color = self.color_opponency(mask) # 打印颜色拮抗后的形状 [1,3,320,320]
+        # mask_color = self.color_adjust(mask_color)# 打印通道调整后的形状 [1,1,320,320]
+        # hm = self.init_conv_mask(mask_color)
+
+        hm = self.init_conv_mask(mask)
         # if self.cond_pe:
         #     m = self.cond_pos_embedding(m)
         #X[1,3,80,80]-->[1,128,80,80]
