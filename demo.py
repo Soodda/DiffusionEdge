@@ -21,6 +21,9 @@ from multiprocessing import cpu_count
 from fvcore.common.config import CfgNode
 from scipy import integrate
 
+import os
+import torchvision.utils as vutils
+
 def load_conf(config_file, conf={}):
     with open(config_file) as f:
         exp_conf = yaml.load(f, Loader=yaml.FullLoader)
@@ -70,6 +73,7 @@ def main(args):
                     fourier_scale=unet_cfg.fourier_scale,
                     cfg=unet_cfg,
                     )
+
     else:
         raise NotImplementedError
 
@@ -181,7 +185,9 @@ class Sampler(object):
 
         model = self.accelerator.unwrap_model(self.model)
         if cfg.sampler.use_ema:
-            sd = data['ema']
+            # sd = data['ema']
+            sd = data.get('ema', data.get('model', data))
+
             new_sd = {}
             for k in sd.keys():
                 if k.startswith("ema_model."):
@@ -208,6 +214,7 @@ class Sampler(object):
                     if batch is None:
                         print(f"Warning: Batch at index {idx} is None. Check your dataset.")
                         break
+                    print("Batch keys:", batch.keys())
 
                     # 手动将数据移动到设备
                     for key in batch.keys():
@@ -305,6 +312,23 @@ class Sampler(object):
                                                            mask=mask)
             elif isinstance(self.model, nn.Module):
                 crop_seg_logits = self.model.sample(batch_size=crop_imgs_temp.shape[0], cond=crop_imgs_temp, mask=mask)
+                os.makedirs('./debug_images', exist_ok=True)
+
+                # 保存 crop_seg_logits 作为图像
+                vutils.save_image(crop_seg_logits, f'./debug_images/crop_seg_logits_batch{i}.png', normalize=True)
+
+                # 保存 cond（crop_imgs_temp）作为图像
+                vutils.save_image(crop_imgs_temp, f'./debug_images/cond_batch{i}.png', normalize=True)
+
+                # 保存 mask（如果有）
+                if mask is not None:
+                    if isinstance(mask, torch.Tensor) and mask.dim() == 4 and mask.shape[1] == 1:
+                        vutils.save_image(mask, f'./debug_images/mask_batch{i}.png', normalize=True)
+                    else:
+                        print(f"Warning: unexpected mask shape {mask.shape}, skipping save.")
+                else:
+                    print(f" mask is none")
+
             else:
                 raise NotImplementedError
 

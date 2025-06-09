@@ -37,7 +37,7 @@ model:
       num_res_blocks: 2
       attn_resolutions: [ ]
       dropout: 0.0
-    ckpt_path: 'checkpoints/first_stage_total_320.pt'
+    ckpt_path: '/home/rtcai/Diffusion/checkpoints/first_stage_total_320.pt'
   unet:
     dim: 128
     cond_net: swin
@@ -58,9 +58,9 @@ model:
 
 data:
   name: edge
-  img_folder: '/data/yeyunfan/edge_detection_datasets/datasets/BSDS_test'
+  img_folder: '/home/rtcai/Diffusion/data/test'
   augment_horizontal_flip: True
-  batch_size: 8
+  batch_size: 1
   num_workers: 4
 
 sampler:
@@ -69,5 +69,5 @@ sampler:
   batch_size: 1
   sample_num: 300
   use_ema: False
-  save_folder: './results'
-  ckpt_path: "/data/huang/diffusion_edge/checkpoints/BSDS_swin_unet12_disloss_bs2x8/model-4.pt"
+  save_folder: '/home/rtcai/Diffusion/BSDS_result/test'
+  ckpt_path: "/home/rtcai/Diffusion/BSDS_result/train/BSDS_swin_unet12_disloss_bs2x8/model-20.pt"

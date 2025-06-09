@@ -39,7 +39,7 @@ model:
       num_res_blocks: 2
       attn_resolutions: [ ]
       dropout: 0.0
-    ckpt_path: './checkpoints/first_stage_total_320.pt' # the weight is obtained by training the first stage model
+    ckpt_path: '/home/rtcai/Diffusion/checkpoints/first_stage_total_320.pt' # the weight is obtained by training the first stage model
 
   unet:
     dim: 128
@@ -62,7 +62,7 @@ model:
 data:
   name: edge
   crop_type: rand_resize_crop
-  img_folder: '/data/yeyunfan/edge_detection_datasets/datasets/BSDS_100%'
+  img_folder: '/home/rtcai/Diffusion/data/train'
   augment_horizontal_flip: True
   batch_size: 2
   num_workers: 8
@@ -75,7 +75,7 @@ trainer:
   save_and_sample_every: 5000
   enable_resume: False
   log_freq: 1000
-  results_folder: "./training/BSDS_swin_unet12_disloss_bs2x8"
+  results_folder: "/home/rtcai/Diffusion/BSDS_result/train/BSDS_swin_unet12_disloss_bs2x8"
   amp: False
   fp16: False
   resume_milestone: 0

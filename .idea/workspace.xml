@@ -4,9 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a57fb937-9c67-4f91-826e-8853fd385b4b" name="Changes" comment="update ReadMe.md">
+    <list default="true" id="a57fb937-9c67-4f91-826e-8853fd385b4b" name="Changes" comment="update Gabor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Unet_Cond.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Unet_Cond.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/BSDS_sample.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/BSDS_sample.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/BSDS_train.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/BSDS_train.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/default.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/default.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/first_stage_d4.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/first_stage_d4.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/demo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/denoising_diffusion_pytorch/ddm_const_sde.py" beforeDir="false" afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/ddm_const_sde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" beforeDir="false" afterPath="$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sample_cond_ldm.py" beforeDir="false" afterPath="$PROJECT_DIR$/sample_cond_ldm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_cond_ldm.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_cond_ldm.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,21 +32,25 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Soodda"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Soodda&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubDefaultAccount">
     <option name="defaultAccountId" value="2d3d7ce5-53fc-47cf-bc30-bc0652b994f8" />
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Soodda/DiffusionEdge.git",
-    "accountId": "2d3d7ce5-53fc-47cf-bc30-bc0652b994f8"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Soodda/DiffusionEdge.git&quot;,
+    &quot;accountId&quot;: &quot;2d3d7ce5-53fc-47cf-bc30-bc0652b994f8&quot;
   }
-}]]></component>
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/configs/BSDS_train.yaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/denoising_diffusion_pytorch/mask_cond_unet.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -50,26 +63,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.Test_Unet_Cond.executor": "Run",
-    "Python.TranMat.executor": "Run",
-    "Python.demo.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/AGF/论文资料/DiffusionEdge/DiffusionEdge-main",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.ColorOpponentProcess.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Test_Unet_Cond.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TranMat.executor&quot;: &quot;Run&quot;,
+    &quot;Python.demo.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/AGF/论文资料/DiffusionEdge/DiffusionEdge-main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Test_Unet_Cond">
+  <component name="RunManager" selected="Python.ColorOpponentProcess">
+    <configuration name="ColorOpponentProcess" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Mask-Conditioned-Latent-Space-Diffusion" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ColorOpponentProcess.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Test_Unet_Cond" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Mask-Conditioned-Latent-Space-Diffusion" />
       <option name="ENV_FILES" value="" />
@@ -160,6 +196,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ColorOpponentProcess" />
         <item itemvalue="Python.Test_Unet_Cond" />
         <item itemvalue="Python.TranMat" />
         <item itemvalue="Python.encoder_decoder" />
@@ -525,7 +562,7 @@
       <option name="project" value="LOCAL" />
       <updated>1724331316050</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -539,7 +576,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="origin/master" />
                       </list>
                     </value>
                   </entry>
@@ -562,14 +599,16 @@
     <MESSAGE value="update ReadMe" />
     <MESSAGE value="fix demo_trt.py bug" />
     <MESSAGE value="update ReadMe.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="update ReadMe.md" />
+    <MESSAGE value="update ColorOpponent" />
+    <MESSAGE value="update Gabor" />
+    <option name="LAST_COMMIT_MESSAGE" value="update Gabor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/demo.py</url>
-          <line>193</line>
+          <line>199</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -579,17 +618,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/train_cond_ldm.py</url>
-          <line>37</line>
+          <line>42</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/demo.py</url>
-          <line>43</line>
+          <line>46</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/demo.py</url>
-          <line>181</line>
+          <line>185</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

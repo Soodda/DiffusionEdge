@@ -37,7 +37,7 @@ model:
       num_res_blocks: 2
       attn_resolutions: [ ]
       dropout: 0.0
-    ckpt_path:
+    ckpt_path: 'E:\AGF\DiffusionResult\first_stage_total_320.pt'
   unet:
     dim: 128
     cond_net: swin
@@ -59,9 +59,9 @@ model:
 
 data:
   name: edge
-  img_folder: '/data/yeyunfan/edge_detection_datasets/datasets/BSDS_test'
+  img_folder: 'E:\AGF\DiffusionResult\demo'
   augment_horizontal_flip: True
-  batch_size: 8
+  batch_size: 1
   num_workers: 4
 
 sampler:
@@ -69,6 +69,6 @@ sampler:
   stride: [240, 240]
   batch_size: 1
   sample_num: 300
-  use_ema: True
-  save_folder:
+  use_ema: False
+  save_folder: 'E:\AGF\DiffusionResult\demo_result'
   ckpt_path:

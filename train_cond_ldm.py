@@ -35,6 +35,11 @@ def load_conf(config_file, conf={}):
 
 
 def main(args):
+    torch.backends.cuda.matmul.allow_tf32 = False  # 禁用TF32加速
+    torch.backends.cudnn.benchmark = False  # 避免cudnn自动优化占用额外显存
+    torch.cuda.empty_cache()
+    os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True,garbage_collection_threshold:0.8'
+
     cfg = CfgNode(args.cfg)
     # logger = create_logger(root_dir=cfg['out_path'])
     # writer = SummaryWriter(cfg['out_path'])
@@ -91,6 +96,9 @@ def main(args):
         use_l1=model_cfg.get('use_l1', True),
         cfg=model_cfg,
     )
+    ldm.enable_gradient_checkpointing()  # 启用梯度检查点
+    ldm.float()  # 确保模型初始化为FP32（后续混合精度会自动转换）
+    torch.cuda.empty_cache()
     data_cfg = cfg.data
 
     if data_cfg['name'] == 'edge':
@@ -102,7 +110,9 @@ def main(args):
         )
     else:
         raise NotImplementedError
-    dl = DataLoader(dataset, batch_size=data_cfg.batch_size, shuffle=True, pin_memory=True,
+    dl = DataLoader(dataset, batch_size=data_cfg.batch_size, shuffle=True,
+                    #pin_memory=True,
+                    pin_memory=False,
                     num_workers=data_cfg.get('num_workers', 2))
     train_cfg = cfg.trainer
     trainer = Trainer(
@@ -156,6 +166,12 @@ class Trainer(object):
             resume_milestone=0,
             cfg={},
     ):
+        torch.cuda.set_per_process_memory_fraction(0.9)  # 限制显存使用90%
+
+        ddp_handler = DistributedDataParallelKwargs(
+            find_unused_parameters=True,
+            bucket_cap_mb=32  # 减少DDP通信缓冲区大小
+        )
         super().__init__()
         ddp_handler = DistributedDataParallelKwargs(find_unused_parameters=True)
         self.accelerator = Accelerator(
@@ -265,6 +281,7 @@ class Trainer(object):
         with tqdm(initial=self.step, total=self.train_num_steps, disable=not accelerator.is_main_process) as pbar:
 
             while self.step < self.train_num_steps:
+
                 total_loss = 0.
                 total_loss_dict = {'loss_simple': 0., 'loss_vlb': 0., 'total_loss': 0., 'lr': 5e-5}
                 for ga_ind in range(self.gradient_accumulate_every):

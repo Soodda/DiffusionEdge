@@ -1,3 +1,10 @@
+import os
+import glob
+from PIL import Image
+import numpy as np
+import os, glob
+from torchvision.utils import save_image
+import torchvision
 import fvcore.common.config
 import torch
 import torch.nn as nn
@@ -9,6 +16,8 @@ from denoising_diffusion_pytorch.efficientnet import efficientnet_b7, EfficientN
 from denoising_diffusion_pytorch.resnet import resnet101, ResNet101_Weights
 from denoising_diffusion_pytorch.swin_transformer import swin_b, Swin_B_Weights
 from denoising_diffusion_pytorch.vgg import vgg16, VGG16_Weights
+
+
 # from denoising_diffusion_pytorch.wcc import fft
 ### Compared to unet4:
 # 1. add FFT-Conv on the mid feature.
@@ -65,10 +74,12 @@ class PositionEmbeddingSine(nn.Module):
         '''
         return pos
 
+
 class PositionEmbeddingLearned(nn.Module):
     """
     Absolute pos embedding, learned.
     """
+
     def __init__(self, feature_size, num_pos_feats=256):
         super().__init__()
         self.row_embed = nn.Embedding(feature_size[0], num_pos_feats)
@@ -110,6 +121,7 @@ class ChannelAttention(nn.Module):
         out = avg_out + max_out
         return self.sigmoid(out) * x
 
+
 class SpatialAtt(nn.Module):
     def __init__(self, in_dim):
         super(SpatialAtt, self).__init__()
@@ -120,15 +132,16 @@ class SpatialAtt(nn.Module):
 
     def forward(self, x):
         b, _, h, w = x.shape
-        att = self.map(x) # b, 1, h, w
-        q = self.q_conv(att) # b, 1, h, w
+        att = self.map(x)  # b, 1, h, w
+        q = self.q_conv(att)  # b, 1, h, w
         q = rearrange(q, 'b c h w -> b (h w) c')
         k = self.k_conv(att)
         k = rearrange(k, 'b c h w -> b c (h w)')
         att = rearrange(att, 'b c h w -> b (h w) c')
-        att = F.softmax(q @ k, dim=-1) @ att # b, hw, 1
+        att = F.softmax(q @ k, dim=-1) @ att  # b, hw, 1
         att = att.reshape(b, 1, h, w)
         return self.activation(att) * x
+
 
 class Mlp(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.ReLU, drop=0.):
@@ -149,7 +162,6 @@ class Mlp(nn.Module):
         x = self.fc2(x)
         x = self.drop(x)
         return x
-
 
 
 class BasicAttetnionLayer(nn.Module):
@@ -191,7 +203,7 @@ class BasicAttetnionLayer(nn.Module):
                 nn.init.xavier_normal_(m.weight)
                 nn.init.constant_(m.bias, 0.)
 
-    def forward(self, x1, x2): # x1 for q (conditional input), x2 for k,v
+    def forward(self, x1, x2):  # x1 for q (conditional input), x2 for k,v
         B, C1, H1, W1 = x1.shape
         _, C2, H2, W2 = x2.shape
         # x1 = x1.permute(0, 2, 3, 1).contiguous() # B, H1, W1, C1
@@ -215,18 +227,18 @@ class BasicAttetnionLayer(nn.Module):
         x1_s = self.avgpool_q(x1)
         qg = self.avgpool_q(x1).permute(0, 2, 3, 1).contiguous()
         qg = qg + self.pos_enc(qg)
-        qg= qg.view(B, -1, C2)
+        qg = qg.view(B, -1, C2)
         kg = self.avgpool_k(x2).permute(0, 2, 3, 1).contiguous()
         kg = kg + self.pos_enc(kg)
         kg = kg.view(B, -1, C1)
         num_window_q = qg.shape[1]
         num_window_k = kg.shape[1]
         qg = self.q_lin(qg).reshape(B, num_window_q, self.nhead, C1 // self.nhead).permute(0, 2, 1,
-                                                                                                      3).contiguous()
+                                                                                           3).contiguous()
         kg2 = self.k_lin(kg).reshape(B, num_window_k, self.nhead, C1 // self.nhead).permute(0, 2, 1,
-                                                                                                       3).contiguous()
+                                                                                            3).contiguous()
         vg = self.v_lin(kg).reshape(B, num_window_k, self.nhead, C1 // self.nhead).permute(0, 2, 1,
-                                                                                                      3).contiguous()
+                                                                                           3).contiguous()
         kg = kg2
         attn = (qg @ kg.transpose(-2, -1))
         attn = self.softmax(attn)
@@ -240,9 +252,10 @@ class BasicAttetnionLayer(nn.Module):
         # x1_s = self.out_norm(x1_s)
         return x1_s
 
+
 class RelationNet(nn.Module):
     def __init__(self, in_channel1=128, in_channel2=128, nhead=8, layers=3, embed_dim=128, ffn_dim=512,
-                 window_size1= [4, 4], window_size2=[1, 1]):
+                 window_size1=[4, 4], window_size2=[1, 1]):
         # self.attention = BasicAttetnionLayer(embed_dim=embed_dim, nhead=nhead, ffn_dim=ffn_dim,
         #                                      window_size1=window_size1, window_size2=window_size2, dropout=0.1)
         super().__init__()
@@ -270,7 +283,7 @@ class RelationNet(nn.Module):
         for i in range(layers):
             self.attentions.append(
                 BasicAttetnionLayer(embed_dim=embed_dim, nhead=nhead, ffn_dim=ffn_dim,
-                                     window_size1=window_size1, window_size2=window_size2, dropout=0.1)
+                                    window_size1=window_size1, window_size2=window_size2, dropout=0.1)
             )
 
     def forward(self, cond, feat):
@@ -282,27 +295,31 @@ class RelationNet(nn.Module):
         return feat
 
 
-
 ################# U-Net model defenition ####################
 
 def exists(x):
     return x is not None
+
 
 def default(val, d):
     if exists(val):
         return val
     return d() if callable(d) else d
 
+
 def identity(t, *args, **kwargs):
     return t
+
 
 def cycle(dl):
     while True:
         for data in dl:
             yield data
 
+
 def has_int_squareroot(num):
     return (math.sqrt(num) ** 2) == num
+
 
 def num_to_groups(num, divisor):
     groups = num // divisor
@@ -312,18 +329,22 @@ def num_to_groups(num, divisor):
         arr.append(remainder)
     return arr
 
+
 def convert_image_to_fn(img_type, image):
     if image.mode != img_type:
         return image.convert(img_type)
     return image
+
 
 # normalization functions
 
 def normalize_to_neg_one_to_one(img):
     return img * 2 - 1
 
+
 def unnormalize_to_zero_to_one(t):
     return (t + 1) * 0.5
+
 
 # small helper modules
 
@@ -335,29 +356,34 @@ class Residual(nn.Module):
     def forward(self, x, *args, **kwargs):
         return self.fn(x, *args, **kwargs) + x
 
-def Upsample(dim, dim_out = None):
+
+def Upsample(dim, dim_out=None):
     return nn.Sequential(
-        nn.Upsample(scale_factor = 2, mode = 'nearest'),
-        nn.Conv2d(dim, default(dim_out, dim), 3, padding = 1)
+        nn.Upsample(scale_factor=2, mode='nearest'),
+        nn.Conv2d(dim, default(dim_out, dim), 3, padding=1)
     )
 
-def Downsample(dim, dim_out = None):
+
+def Downsample(dim, dim_out=None):
     return nn.Conv2d(dim, default(dim_out, dim), 4, 2, 1)
+
 
 class WeightStandardizedConv2d(nn.Conv2d):
     """
     https://arxiv.org/abs/1903.10520
     weight standardization purportedly works synergistically with group normalization
     """
+
     def forward(self, x):
         eps = 1e-5 if x.dtype == torch.float32 else 1e-3
 
         weight = self.weight
         mean = reduce(weight, 'o ... -> o 1 1 1', 'mean')
-        var = reduce(weight, 'o ... -> o 1 1 1', partial(torch.var, unbiased = False))
+        var = reduce(weight, 'o ... -> o 1 1 1', partial(torch.var, unbiased=False))
         normalized_weight = (weight - mean) * (var + eps).rsqrt()
 
         return F.conv2d(x, normalized_weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+
 
 class LayerNorm(nn.Module):
     def __init__(self, dim):
@@ -366,9 +392,10 @@ class LayerNorm(nn.Module):
 
     def forward(self, x):
         eps = 1e-5 if x.dtype == torch.float32 else 1e-3
-        var = torch.var(x, dim = 1, unbiased = False, keepdim = True)
-        mean = torch.mean(x, dim = 1, keepdim = True)
+        var = torch.var(x, dim=1, unbiased=False, keepdim=True)
+        mean = torch.mean(x, dim=1, keepdim=True)
         return (x - mean) * (var + eps).rsqrt() * self.g
+
 
 class PreNorm(nn.Module):
     def __init__(self, dim, fn):
@@ -379,6 +406,7 @@ class PreNorm(nn.Module):
     def forward(self, x):
         x = self.norm(x)
         return self.fn(x)
+
 
 # sinusoidal positional embeds
 
@@ -396,6 +424,7 @@ class SinusoidalPosEmb(nn.Module):
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
         return emb
 
+
 class GaussianFourierProjection(nn.Module):
     """Gaussian Fourier embeddings for noise levels."""
 
@@ -407,33 +436,35 @@ class GaussianFourierProjection(nn.Module):
         x_proj = x[:, None] * self.W[None, :] * 2 * math.pi
         return torch.cat([torch.sin(x_proj), torch.cos(x_proj)], dim=-1)
 
+
 class RandomOrLearnedSinusoidalPosEmb(nn.Module):
     """ following @crowsonkb 's lead with random (learned optional) sinusoidal pos emb """
     """ https://github.com/crowsonkb/v-diffusion-jax/blob/master/diffusion/models/danbooru_128.py#L8 """
 
-    def __init__(self, dim, is_random = False):
+    def __init__(self, dim, is_random=False):
         super().__init__()
         assert (dim % 2) == 0
         half_dim = dim // 2
-        self.weights = nn.Parameter(torch.randn(half_dim), requires_grad = not is_random)
+        self.weights = nn.Parameter(torch.randn(half_dim), requires_grad=not is_random)
 
     def forward(self, x):
         x = rearrange(x, 'b -> b 1')
         freqs = x * rearrange(self.weights, 'd -> 1 d') * 2 * math.pi
-        fouriered = torch.cat((freqs.sin(), freqs.cos()), dim = -1)
-        fouriered = torch.cat((x, fouriered), dim = -1)
+        fouriered = torch.cat((freqs.sin(), freqs.cos()), dim=-1)
+        fouriered = torch.cat((x, fouriered), dim=-1)
         return fouriered
+
 
 # building block modules
 
 class Block(nn.Module):
-    def __init__(self, dim, dim_out, groups = 8):
+    def __init__(self, dim, dim_out, groups=8):
         super().__init__()
-        self.proj = WeightStandardizedConv2d(dim, dim_out, 3, padding = 1)
+        self.proj = WeightStandardizedConv2d(dim, dim_out, 3, padding=1)
         self.norm = nn.GroupNorm(groups, dim_out)
         self.act = nn.SiLU()
 
-    def forward(self, x, scale_shift = None):
+    def forward(self, x, scale_shift=None):
         x = self.proj(x)
         x = self.norm(x)
 
@@ -444,16 +475,17 @@ class Block(nn.Module):
         x = self.act(x)
         return x
 
+
 class BlockFFT(nn.Module):
-    def __init__(self, dim, h, w, groups = 8):
+    def __init__(self, dim, h, w, groups=8):
         super().__init__()
         # self.proj = WeightStandardizedConv2d(dim, dim_out, 3, padding = 1)
-        self.complex_weight = nn.Parameter(torch.randn(dim, h, w//2+1, 2, dtype=torch.float32) * 0.02)
+        self.complex_weight = nn.Parameter(torch.randn(dim, h, w // 2 + 1, 2, dtype=torch.float32) * 0.02)
         # self.complex_weight = nn.Parameter(torch.normal(mean=0, std=0.01, size=(dim, h, w // 2 + 1, 2), dtype=torch.float32))
         # self.norm = nn.GroupNorm(groups, dim)
         # self.act = nn.SiLU()
 
-    def forward(self, x, scale_shift = None):
+    def forward(self, x, scale_shift=None):
         B, C, H, W = x.shape
         # print("Input shape:", x.shape)#1,512,10,10
         # print("Complex weight shape:", self.complex_weight.shape)#512,10,6,2
@@ -463,6 +495,7 @@ class BlockFFT(nn.Module):
         x = x.reshape(B, C, H, W)
 
         return x
+
 
 class BlockGabor(nn.Module):
     def __init__(self, dim, h, w, kernel_size=15, sigma=5.0, lambd=10.0, gamma=0.5):
@@ -518,7 +551,8 @@ class BlockGabor(nn.Module):
         y_theta = -x * torch.sin(theta) + y * torch.cos(theta)
 
         # Gabor formula
-        gabor = torch.exp(-(x_theta**2 + gamma**2 * y_theta**2) / (2 * sigma**2)) * torch.cos(2 * math.pi * x_theta / lambd)
+        gabor = torch.exp(-(x_theta ** 2 + gamma ** 2 * y_theta ** 2) / (2 * sigma ** 2)) * torch.cos(
+            2 * math.pi * x_theta / lambd)
         gabor = gabor.unsqueeze(0).unsqueeze(0)  # Shape: (1, 1, kernel_size, kernel_size)
         return gabor
 
@@ -566,7 +600,7 @@ class EnhancedBlockGabor(nn.Module):
                 envelope = torch.exp(-(x_theta ** 2 + gamma ** 2 * y_theta ** 2) / (2 * sigma ** 2))
                 carrier = torch.exp(1j * 2 * math.pi * fu * x_theta)
                 kernel = (fu ** 2 / (math.pi * gamma ** 2)) * envelope * carrier
-                filters.append(torch.stack([kernel.real, kernel.imag]))#实部+虚部
+                filters.append(torch.stack([kernel.real, kernel.imag]))  # 实部+虚部
 
         return torch.stack(filters)  # (scales*orientations, 2, kernel_size, kernel_size)
 
@@ -583,67 +617,68 @@ class EnhancedBlockGabor(nn.Module):
         mag = mag.permute(0, 1, 2, 3, 5, 4).reshape(B, -1, H, W)  # (B, C*S*O, H, W)
         return self.norm(self.adjust_conv(mag))
 
+
 class ResnetBlock(nn.Module):
-    def __init__(self, dim, dim_out, *, time_emb_dim = None, groups = 8):
+    def __init__(self, dim, dim_out, *, time_emb_dim=None, groups=8):
         super().__init__()
         self.mlp = nn.Sequential(
             nn.SiLU(),
             nn.Linear(time_emb_dim, dim_out * 2)
         ) if exists(time_emb_dim) else None
 
-        self.block1 = Block(dim, dim_out, groups = groups)
-        self.block2 = Block(dim_out, dim_out, groups = groups)
+        self.block1 = Block(dim, dim_out, groups=groups)
+        self.block2 = Block(dim_out, dim_out, groups=groups)
         self.res_conv = nn.Conv2d(dim, dim_out, 1) if dim != dim_out else nn.Identity()
 
-    def forward(self, x, time_emb = None):
-
+    def forward(self, x, time_emb=None):
         scale_shift = None
         if exists(self.mlp) and exists(time_emb):
             time_emb = self.mlp(time_emb)
             time_emb = rearrange(time_emb, 'b c -> b c 1 1')
-            scale_shift = time_emb.chunk(2, dim = 1)
+            scale_shift = time_emb.chunk(2, dim=1)
 
-        h = self.block1(x, scale_shift = scale_shift)
+        h = self.block1(x, scale_shift=scale_shift)
 
         h = self.block2(h)
 
         return h + self.res_conv(x)
+
 
 class ResnetBlockFFT(nn.Module):
-    def __init__(self, dim, dim_out, h, w, *, time_emb_dim = None, groups = 8):
+    def __init__(self, dim, dim_out, h, w, *, time_emb_dim=None, groups=8):
         super().__init__()
         self.mlp = nn.Sequential(
             nn.SiLU(),
             nn.Linear(time_emb_dim, dim_out * 2)
         ) if exists(time_emb_dim) else None
 
-        self.block1 = Block(dim, dim_out, groups = groups)
-        self.block2 = BlockFFT(dim_out, h, w, groups = groups)
+        self.block1 = Block(dim, dim_out, groups=groups)
+        self.block2 = BlockFFT(dim_out, h, w, groups=groups)
         self.res_conv = nn.Conv2d(dim, dim_out, 1) if dim != dim_out else nn.Identity()
 
-    def forward(self, x, time_emb = None):
-
+    def forward(self, x, time_emb=None):
         scale_shift = None
         if exists(self.mlp) and exists(time_emb):
             time_emb = self.mlp(time_emb)
             time_emb = rearrange(time_emb, 'b c -> b c 1 1')
-            scale_shift = time_emb.chunk(2, dim = 1)
+            scale_shift = time_emb.chunk(2, dim=1)
 
-        h = self.block1(x, scale_shift = scale_shift)
+        h = self.block1(x, scale_shift=scale_shift)
 
         h = self.block2(h)
 
         return h + self.res_conv(x)
 
+
 class ResnetDownsampleBlock(nn.Module):
-    def __init__(self, dim, dim_out, *, time_emb_dim = None, groups = 8):
+    def __init__(self, dim, dim_out, *, time_emb_dim=None, groups=8):
         super().__init__()
         self.mlp = nn.Sequential(
             nn.SiLU(),
             nn.Linear(time_emb_dim, dim_out * 2)
         ) if exists(time_emb_dim) else None
 
-        self.block1 = Block(dim, dim_out, groups = groups)
+        self.block1 = Block(dim, dim_out, groups=groups)
         self.block2 = nn.Sequential(
             WeightStandardizedConv2d(dim_out, dim_out, 3, stride=2, padding=1),
             nn.GroupNorm(groups, dim_out),
@@ -651,29 +686,29 @@ class ResnetDownsampleBlock(nn.Module):
         )
         self.res_conv = nn.Conv2d(dim, dim_out, 1) if dim != dim_out else nn.Identity()
 
-    def forward(self, x, time_emb = None):
-
+    def forward(self, x, time_emb=None):
         scale_shift = None
         if exists(self.mlp) and exists(time_emb):
             time_emb = self.mlp(time_emb)
             time_emb = rearrange(time_emb, 'b c -> b c 1 1')
-            scale_shift = time_emb.chunk(2, dim = 1)
+            scale_shift = time_emb.chunk(2, dim=1)
 
-        h = self.block1(x, scale_shift = scale_shift)
+        h = self.block1(x, scale_shift=scale_shift)
 
         h = self.block2(h)
 
         return h + self.res_conv(
-                F.interpolate(x, size=h.shape[-2:], mode="bilinear")
-                )
+            F.interpolate(x, size=h.shape[-2:], mode="bilinear")
+        )
+
 
 class LinearAttention(nn.Module):
-    def __init__(self, dim, heads = 4, dim_head = 32):
+    def __init__(self, dim, heads=4, dim_head=32):
         super().__init__()
         self.scale = dim_head ** -0.5
         self.heads = heads
         hidden_dim = dim_head * heads
-        self.to_qkv = nn.Conv2d(dim, hidden_dim * 3, 1, bias = False)
+        self.to_qkv = nn.Conv2d(dim, hidden_dim * 3, 1, bias=False)
 
         self.to_out = nn.Sequential(
             nn.Conv2d(hidden_dim, dim, 1),
@@ -682,11 +717,11 @@ class LinearAttention(nn.Module):
 
     def forward(self, x):
         b, c, h, w = x.shape
-        qkv = self.to_qkv(x).chunk(3, dim = 1)
-        q, k, v = map(lambda t: rearrange(t, 'b (h c) x y -> b h c (x y)', h = self.heads), qkv)
+        qkv = self.to_qkv(x).chunk(3, dim=1)
+        q, k, v = map(lambda t: rearrange(t, 'b (h c) x y -> b h c (x y)', h=self.heads), qkv)
 
-        q = q.softmax(dim = -2)
-        k = k.softmax(dim = -1)
+        q = q.softmax(dim=-2)
+        k = k.softmax(dim=-1)
 
         q = q * self.scale
         v = v / (h * w)
@@ -694,11 +729,12 @@ class LinearAttention(nn.Module):
         context = torch.einsum('b h d n, b h e n -> b h d e', k, v)
 
         out = torch.einsum('b h d e, b h d n -> b h e n', context, q)
-        out = rearrange(out, 'b h c (x y) -> b (h c) x y', h = self.heads, x = h, y = w)
+        out = rearrange(out, 'b h c (x y) -> b (h c) x y', h=self.heads, x=h, y=w)
         return self.to_out(out)
 
+
 class Attention(nn.Module):
-    def __init__(self, dim, heads = 4, dim_head = 32):
+    def __init__(self, dim, heads=4, dim_head=32):
         super().__init__()
         self.scale = dim_head ** -0.5
         self.heads = heads
@@ -725,22 +761,178 @@ class Attention(nn.Module):
 class ColorOpponency(nn.Module):
     def __init__(self):
         super(ColorOpponency, self).__init__()
-        # 定义颜色拮抗变换的权重矩阵
-        self.weight = torch.tensor([
+        weight = torch.tensor([
             [0.299, 0.587, 0.114],    # Luminance (亮度)
             [0.5, -0.5, 0],           # Red-Green (红-绿)
             [-0.169, -0.331, 0.5]     # Blue-Yellow (蓝-黄)
-        ], dtype=torch.float32)
-        self.weight = self.weight.unsqueeze(-1).unsqueeze(-1)  # 扩展为卷积核形状 (3, 3, 1, 1)
-        self.bias = torch.zeros(3)  # 偏置设为0
+        ], dtype=torch.float32).view(3, 3, 1, 1)
+        # self.weight = self.weight.unsqueeze(-1).unsqueeze(-1)  # 扩展为卷积核形状 (3, 3, 1, 1)
+        # self.bias = torch.zeros(3)  # 偏置设为0
+        self.register_buffer('weight', weight)
+        self.register_buffer('bias', torch.zeros(3))
 
     def forward(self, x):
         # x 的形状: (batch_size, 3, H, W)
         # 使用 1x1 卷积实现线性变换
-        return F.conv2d(x, self.weight.to(x.device), self.bias.to(x.device))
+        # return F.conv2d(x, self.weight.to(x.device), self.bias.to(x.device))
+        # 输入: x.shape = [B, 3, H, W]
+        # 输出: [B, 3, H, W]，分别是亮度、红绿通道、蓝黄通道
+
+        # 应用 1x1 卷积进行颜色拮抗变换
+        y = F.conv2d(x, self.weight, self.bias)
+        #全图归一化 training
+        # mean = y.mean(dim=(0, 2, 3), keepdim=True)
+        # std = y.std(dim=(0, 2, 3), keepdim=True) + 1e-6
+        mean = y.mean(dim=(2, 3), keepdim=True)
+        std = y.std(dim=(2, 3), keepdim=True) + 1e-6
+        y = (y - mean) / std  # 标准化到零均值、单位方差
+
+        #归一化 test
+        # luminance = y[:, 0:1, :, :]
+        # # mean = y.mean(dim=(2, 3), keepdim=True)
+        # # std = y.std(dim=(2, 3), keepdim=True) + 1e-6  # 避免除以0
+        # mean = luminance.mean(dim=(2, 3), keepdim=True)
+        # std = luminance.std(dim=(2, 3), keepdim=True) + 1e-6
+        # luminance_norm = (luminance - mean) / std
+        # alpha = 0.6  # 保留一些原始局部特征
+        # luminance_blend = alpha * luminance_norm + (1 - alpha) * (luminance - mean)
+        #
+        # # 保留对比通道
+        # rg = y[:, 1:2, :, :]
+        # by = y[:, 2:3, :, :]
+        #
+        # y = torch.cat([luminance_norm, rg, by], dim=1)
+        # y = F.avg_pool2d(y, kernel_size=3, stride=1, padding=1)#空间平滑
+        return y
+
+# class ColorOpponency(nn.Module):
+#     def __init__(self):
+#         super(ColorOpponency, self).__init__()
+#         # 定义颜色拮抗变换的权重矩阵
+#         self.weight = torch.tensor([
+#             [0.299, 0.587, 0.114],  # Luminance (亮度)
+#             [0.5, -0.5, 0],  # Red-Green (红-绿)
+#             [-0.169, -0.331, 0.5]  # Blue-Yellow (蓝-黄)
+#         ], dtype=torch.float32)
+#         self.weight = self.weight.unsqueeze(-1).unsqueeze(-1)  # 扩展为卷积核形状 (3, 3, 1, 1)
+#         self.bias = torch.zeros(3)  # 偏置设为0
+#
+#     def forward(self, x):
+#         # x 的形状: (batch_size, 3, H, W)
+#         # 使用 1x1 卷积实现线性变换
+#         y = F.conv2d(x, self.weight.to(x.device), self.bias.to(x.device))
+#         return y
+
+
+class TextureSuppressionLayer(nn.Module):
+    def __init__(self, nThetas=8):
+        super().__init__()
+        self.nThetas = nThetas
+        self.register_buffer('_dummy', torch.tensor(0.))
+
+        self.sigmax = 3.65
+        self.sigmay = self.sigmax / 8
+        self.surround_scale = 3
+
+        self._precompute_kernels()
+
+    def _precompute_kernels(self):
+        self.center_kernels = nn.ParameterList()
+        self.surround_kernels = nn.ParameterList()
+
+        for t in range(self.nThetas):
+            theta = torch.tensor(t * torch.pi / self.nThetas, device=self.device)
+
+            center_k = self._create_gaussian_kernel(self.sigmax, self.sigmay, theta).view(1, 1, 21, 21)
+            surround_k = self._create_gaussian_kernel(
+                self.sigmax * self.surround_scale,
+                self.sigmay * self.surround_scale,
+                theta
+            ).view(1, 1, 21, 21)
+
+            self.center_kernels.append(nn.Parameter(center_k, requires_grad=False))
+            self.surround_kernels.append(nn.Parameter(surround_k, requires_grad=False))
+
+    def _create_gaussian_kernel(self, sigma_x, sigma_y, theta):
+        size = 21
+        half = size // 2
+        x = torch.arange(-half, half + 1, device=self.device)
+        y = torch.arange(-half, half + 1, device=self.device)
+        xx, yy = torch.meshgrid(x, y, indexing='ij')
+
+        cos_theta = torch.cos(theta)
+        sin_theta = torch.sin(theta)
+        xx_rot = xx * cos_theta + yy * sin_theta
+        yy_rot = -xx * sin_theta + yy * cos_theta
+
+        exponent = -0.5 * (xx_rot.square() / sigma_x ** 2 + yy_rot.square() / sigma_y ** 2)
+        kernel = torch.exp(exponent)
+        return kernel / kernel.sum()
+
+    def forward(self, x):
+        if isinstance(x, list):
+            return [self._process_single_tensor(item) for item in x]
+        return self._process_single_tensor(x)
+
+    def _process_single_tensor(self, x):
+        B, C, H, W = x.shape
+        result = torch.empty_like(x)
+
+        for c in range(C):
+            channel_data = x[:, c:c + 1]
+
+            with torch.no_grad():
+                multi_orient = channel_data.expand(-1, -1, -1, -1).unsqueeze(-1).repeat(1, 1, 1, 1, self.nThetas)
+                max_vals = multi_orient.max(dim=1)[0]
+                avg_response = max_vals.mean(dim=-1)
+
+            suppressed = self._suppress_channel(avg_response, channel_data)
+            result[:, c:c + 1] = suppressed
+
+        return result
+
+    def _suppress_channel(self, avg_response, channel_data):
+        B, H, W = avg_response.shape
+
+        # 动态计算局部标准差
+        with torch.no_grad():
+            pool_size = min(3, H // 4)
+            if pool_size % 2 == 0: pool_size -= 1
+
+            avg_sq = F.avg_pool2d(avg_response.unsqueeze(1).square(), kernel_size=pool_size,
+                                  padding=pool_size // 2, stride=1)
+            avg = F.avg_pool2d(avg_response.unsqueeze(1), kernel_size=pool_size,
+                               padding=pool_size // 2, stride=1)
+            local_std = torch.sqrt(torch.clamp(avg_sq - avg.square(), min=1e-6))
+            local_std = (local_std - local_std.min()) / (local_std.max() - local_std.min() + 1e-8)
+
+        suppressed = torch.zeros_like(avg_response)
+
+        avg_response_input = avg_response.unsqueeze(1)  # [B,1,H,W]
+
+        for t in range(self.nThetas):
+            center_k = self.center_kernels[t].repeat(B, 1, 1, 1)
+            surround_k = self.surround_kernels[t].repeat(B, 1, 1, 1)
+
+            center_resp = F.conv2d(avg_response_input, center_k, padding='same', groups=B).squeeze(1)
+            surround_resp = F.conv2d(avg_response_input, surround_k, padding='same', groups=B).squeeze(1)
+
+            std_adjusted = local_std.squeeze(1)
+            suppression = torch.clamp(center_resp - std_adjusted * surround_resp, min=0)
+
+            # 简化方向掩码逻辑（用平均分配方式代替 argmax）
+            mask = (torch.arange(B, device=avg_response.device) % self.nThetas == t).view(B, 1, 1)
+            suppressed = torch.where(mask, suppression, suppressed)
+
+        return suppressed.unsqueeze(1)
+
+    @property
+    def device(self):
+        return self._dummy.device
+
 
 class ConditionEncoder(nn.Module):
-    #CNN Resnet下采样
+    # CNN Resnet下采样
     def __init__(self,
                  down_dim_mults=(2, 4, 8),
                  dim=64,
@@ -752,21 +944,21 @@ class ConditionEncoder(nn.Module):
         self.color_adjust = nn.Conv2d(3, in_dim, kernel_size=1)
 
         self.init_conv = nn.Sequential(
-                            nn.Conv2d(in_dim, dim, kernel_size=3, stride=1, padding=1),
-                            nn.GroupNorm(num_groups=min(dim // 4, 8), num_channels=dim),
+            nn.Conv2d(in_dim, dim, kernel_size=3, stride=1, padding=1),
+            nn.GroupNorm(num_groups=min(dim // 4, 8), num_channels=dim),
         )
-        #下采样
+        # 下采样
         self.num_resolutions = len(down_dim_mults)
         self.downs = nn.ModuleList()
         in_mults = (1,) + tuple(down_dim_mults[:-1])
-        in_dims = [mult*dim for mult in in_mults]
-        out_dims = [mult*dim for mult in down_dim_mults]
+        in_dims = [mult * dim for mult in in_mults]
+        out_dims = [mult * dim for mult in down_dim_mults]
         for i_level in range(self.num_resolutions):
             block_in = in_dims[i_level]
             block_out = out_dims[i_level]
             self.downs.append(ResnetDownsampleBlock(dim=block_in,
-                                     dim_out=block_out))
-        #输出卷积层
+                                                    dim_out=block_out))
+        # 输出卷积层
         if self.num_resolutions < 1:
             self.out_conv = nn.Conv2d(dim, out_dim, 1)
         else:
@@ -786,35 +978,38 @@ class ConditionEncoder(nn.Module):
 
 
 class Unet(nn.Module):
-    #条件生成任务
+    # 条件生成任务
     def __init__(
-        self,
-        dim,
-        init_dim=None,
-        out_dim=None,
-        dim_mults=(1, 2, 4, 8),
-        cond_in_dim=1,
-        cond_dim=64,
-        cond_dim_mults=(2, 4, 8),
-        channels=1,
-        out_mul=1,
-        self_condition=False,
-        resnet_block_groups=8,
-        learned_variance=False,
-        learned_sinusoidal_cond=False,
-        random_fourier_features=False,
-        learned_sinusoidal_dim=16,
-        window_sizes1=[[16, 16], [8, 8], [4, 4], [2, 2]],
-        window_sizes2=[[16, 16], [8, 8], [4, 4], [2, 2]],
-        fourier_scale=16,
-        ckpt_path=None,
-        ignore_keys=[],
-        cfg={},
-        **kwargs
+            self,
+            dim,
+            init_dim=None,
+            out_dim=None,
+            dim_mults=(1, 2, 4, 8),
+            cond_in_dim=1,
+            cond_dim=64,
+            cond_dim_mults=(2, 4, 8),
+            channels=1,
+            out_mul=1,
+            self_condition=False,
+            # self_condition=True,
+            resnet_block_groups=8,
+            learned_variance=False,
+            learned_sinusoidal_cond=False,
+            random_fourier_features=False,
+            learned_sinusoidal_dim=16,
+            window_sizes1=[[16, 16], [8, 8], [4, 4], [2, 2]],
+            window_sizes2=[[16, 16], [8, 8], [4, 4], [2, 2]],
+            fourier_scale=16,
+            ckpt_path=None,
+            ignore_keys=[],
+            cfg={},
+            # debug_mode=False,
+            **kwargs
     ):
         super().__init__()
 
         # determine dimensions
+        # self.debug_mode = debug_mode  # 添加调试模式开关
         self.cond_pe = cfg.get('cond_pe', False)
         num_pos_feats = cfg.num_pos_feats if self.cond_pe else 0
         self.channels = channels
@@ -831,9 +1026,11 @@ class Unet(nn.Module):
         # self.init_conv_mask = ConditionEncoder(down_dim_mults=cond_dim_mults, dim=cond_dim,
         #                                        in_dim=cond_in_dim, out_dim=init_dim)
 
-        #颜色拮抗模块
+        # 颜色拮抗模块
         self.color_opponency = ColorOpponency()
+        # self.color_adjust = nn.Conv2d(5, 3, kernel_size=1)
         self.color_adjust = nn.Conv2d(3, 3, kernel_size=1)
+        # self.texture_suppressor = TextureSuppressionLayer(nThetas=8)
 
         if cfg.cond_net == 'effnet':
             f_condnet = 48
@@ -869,7 +1066,7 @@ class Unet(nn.Module):
         if self.cond_pe:
             self.cond_pos_embedding = nn.Sequential(
                 PositionEmbeddingLearned(
-                    feature_size=cfg.cond_feature_size, num_pos_feats=cfg.num_pos_feats//2),
+                    feature_size=cfg.cond_feature_size, num_pos_feats=cfg.num_pos_feats // 2),
                 nn.Conv2d(num_pos_feats + init_dim, init_dim, 1)
             )
         # self.init_conv_mask = nn.Conv2d(1, init_dim, 7, padding=3)
@@ -892,12 +1089,12 @@ class Unet(nn.Module):
             self.projects.append(nn.Conv2d(512, dims[3], 1))
         else:
             self.projects.append(nn.Conv2d(f_condnet, dims[0], 1))
-            self.projects.append(nn.Conv2d(f_condnet*2, dims[1], 1))
-            self.projects.append(nn.Conv2d(f_condnet*4, dims[2], 1))
-            self.projects.append(nn.Conv2d(f_condnet*8, dims[3], 1))
-        #print(len(self.projects))
+            self.projects.append(nn.Conv2d(f_condnet * 2, dims[1], 1))
+            self.projects.append(nn.Conv2d(f_condnet * 4, dims[2], 1))
+            self.projects.append(nn.Conv2d(f_condnet * 8, dims[3], 1))
+        # print(len(self.projects))
 
-        block_klass = partial(ResnetBlock, groups = resnet_block_groups)
+        block_klass = partial(ResnetBlock, groups=resnet_block_groups)
 
         # time embeddings
 
@@ -909,7 +1106,7 @@ class Unet(nn.Module):
             sinu_pos_emb = RandomOrLearnedSinusoidalPosEmb(learned_sinusoidal_dim, random_fourier_features)
             fourier_dim = learned_sinusoidal_dim + 1
         else:
-            sinu_pos_emb = GaussianFourierProjection(dim//2, scale=fourier_scale)
+            sinu_pos_emb = GaussianFourierProjection(dim // 2, scale=fourier_scale)
             fourier_dim = dim
 
         self.time_mlp = nn.Sequential(
@@ -930,17 +1127,16 @@ class Unet(nn.Module):
         self.relation_layers_up2 = nn.ModuleList([])
         num_resolutions = len(in_out)
         input_size = cfg.get('input_size', [80, 80])
-        feature_size_list = [[int(input_size[0]/2**k), int(input_size[1]/2**k)] for k in range(len(dim_mults))]
-
+        feature_size_list = [[int(input_size[0] / 2 ** k), int(input_size[1] / 2 ** k)] for k in range(len(dim_mults))]
 
         for ind, (dim_in, dim_out) in enumerate(in_out):
             is_last = ind >= (num_resolutions - 1)
 
             self.downs.append(nn.ModuleList([
-                block_klass(dim_in, dim_in, time_emb_dim = time_dim),
-                block_klass(dim_in, dim_in, time_emb_dim = time_dim),
+                block_klass(dim_in, dim_in, time_emb_dim=time_dim),
+                block_klass(dim_in, dim_in, time_emb_dim=time_dim),
                 Residual(PreNorm(dim_in, LinearAttention(dim_in))),
-                Downsample(dim_in, dim_out) if not is_last else nn.Conv2d(dim_in, dim_out, 3, padding = 1)
+                Downsample(dim_in, dim_out) if not is_last else nn.Conv2d(dim_in, dim_out, 3, padding=1)
             ]))
             # self.downs_mask.append(nn.ModuleList([
             #     block_klass(dim_in, dim_in, time_emb_dim=time_dim),
@@ -949,27 +1145,28 @@ class Unet(nn.Module):
             #     Downsample(dim_in, dim_out) if not is_last else nn.Conv2d(dim_in, dim_out, 3, padding=1)
             # ]))
             self.relation_layers_down.append(RelationNet(in_channel1=dims[ind], in_channel2=dims[ind], nhead=8,
-                                                  layers=1, embed_dim=dims[ind], ffn_dim=dims[ind]*2,
-                                                  window_size1=window_sizes1[ind], window_size2=window_sizes2[ind])
-                                      )
+                                                         layers=1, embed_dim=dims[ind], ffn_dim=dims[ind] * 2,
+                                                         window_size1=window_sizes1[ind],
+                                                         window_size2=window_sizes2[ind])
+                                             )
 
         mid_dim = dims[-1]
-        self.mid_block1 = block_klass(mid_dim, mid_dim, time_emb_dim = time_dim)
+        self.mid_block1 = block_klass(mid_dim, mid_dim, time_emb_dim=time_dim)
         self.mid_attn = Residual(PreNorm(mid_dim, Attention(mid_dim)))
-        self.mid_block2 = block_klass(mid_dim, mid_dim, time_emb_dim = time_dim)
+        self.mid_block2 = block_klass(mid_dim, mid_dim, time_emb_dim=time_dim)
         self.decouple1 = nn.Sequential(
             nn.GroupNorm(num_groups=min(mid_dim // 4, 8), num_channels=mid_dim),
             nn.Conv2d(mid_dim, mid_dim, 3, padding=1),
-            BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
-            # BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
-            #            gamma=0.5),
+            #BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
+            BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
+                       gamma=0.5),
         )
         self.decouple2 = nn.Sequential(
             nn.GroupNorm(num_groups=min(mid_dim // 4, 8), num_channels=mid_dim),
             nn.Conv2d(mid_dim, mid_dim, 3, padding=1),
-            BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
-            # BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
-            #            gamma=0.5),
+            #BlockFFT(mid_dim, input_size[0]//8, input_size[1]//8),
+            BlockGabor(dim=mid_dim, h=input_size[0] // 8, w=input_size[1] // 8, kernel_size=15, sigma=5.0, lambd=10.0,
+                       gamma=0.5),
         )
 
         for ind, (dim_in, dim_out) in enumerate(reversed(in_out)):
@@ -979,13 +1176,13 @@ class Unet(nn.Module):
                 block_klass(dim_out + dim_in, dim_out, time_emb_dim=time_dim),
                 block_klass(dim_out + dim_in, dim_out, time_emb_dim=time_dim),
                 Residual(PreNorm(dim_out, LinearAttention(dim_out))),
-                Upsample(dim_out, dim_in) if not is_last else nn.Conv2d(dim_out, dim_in, 3, padding = 1)
+                Upsample(dim_out, dim_in) if not is_last else nn.Conv2d(dim_out, dim_in, 3, padding=1)
             ]))
-            self.relation_layers_up.append(RelationNet(in_channel1=dims_rev[ind+1], in_channel2=dims_rev[ind],
+            self.relation_layers_up.append(RelationNet(in_channel1=dims_rev[ind + 1], in_channel2=dims_rev[ind],
                                                        nhead=8, layers=1, embed_dim=dims_rev[ind],
                                                        ffn_dim=dims_rev[ind] * 2,
-                                                         window_size1=window_sizes1[::-1][ind],
-                                                         window_size2=window_sizes2[::-1][ind])
+                                                       window_size1=window_sizes1[::-1][ind],
+                                                       window_size2=window_sizes2[::-1][ind])
                                            )
             self.ups2.append(nn.ModuleList([
                 block_klass(dim_out + dim_in, dim_out, time_emb_dim=time_dim),
@@ -994,19 +1191,19 @@ class Unet(nn.Module):
                 Upsample(dim_out, dim_in) if not is_last else nn.Conv2d(dim_out, dim_in, 3, padding=1)
             ]))
             self.relation_layers_up2.append(RelationNet(in_channel1=dims_rev[ind + 1], in_channel2=dims_rev[ind],
-                                                       nhead=8, layers=1, embed_dim=dims_rev[ind],
-                                                       ffn_dim=dims_rev[ind] * 2,
-                                                       window_size1=window_sizes1[::-1][ind],
-                                                       window_size2=window_sizes2[::-1][ind])
-                                           )
+                                                        nhead=8, layers=1, embed_dim=dims_rev[ind],
+                                                        ffn_dim=dims_rev[ind] * 2,
+                                                        window_size1=window_sizes1[::-1][ind],
+                                                        window_size2=window_sizes2[::-1][ind])
+                                            )
 
         default_out_dim = channels * (1 if not learned_variance else 2)
         self.out_dim = default(out_dim, default_out_dim)
 
-        self.final_res_block = block_klass(dim * 2, dim, time_emb_dim = time_dim)
+        self.final_res_block = block_klass(dim * 2, dim, time_emb_dim=time_dim)
         self.final_conv = nn.Conv2d(dim, self.out_dim * out_mul, 1)
 
-        self.final_res_block2 = block_klass(dim * 2, dim, time_emb_dim = time_dim)
+        self.final_res_block2 = block_klass(dim * 2, dim, time_emb_dim=time_dim)
         self.final_conv2 = nn.Conv2d(dim, self.out_dim, 1)
 
         # self.init_weights()
@@ -1045,10 +1242,11 @@ class Unet(nn.Module):
                 nn.init.xavier_normal_(m.weight)
                 nn.init.constant_(m.bias, 0.)
 
-    def forward(self, x, time, mask, x_self_cond = None, **kwargs):
+    def forward(self, x, time, mask, x_self_cond=None, **kwargs):
         if self.self_condition:
             x_self_cond = default(x_self_cond, lambda: torch.zeros_like(x))
-            x = torch.cat((x_self_cond, x), dim = 1)
+            x = torch.cat((x_self_cond, x), dim=1)
+            self.show_tensor_image(x)
         sigma = time.reshape(-1, 1, 1, 1)
         eps = 1e-4
         c_skip1 = 1 - sigma
@@ -1060,20 +1258,30 @@ class Unet(nn.Module):
 
         x_clone = x.clone()
         x = c_in * x
-        # mask = torch.cat([], dim=1)
-        #颜色拮抗处理
-        # mask_color = self.color_opponency(mask) # 打印颜色拮抗后的形状 [1,3,320,320]
-        # mask_color = self.color_adjust(mask_color)# 打印通道调整后的形状 [1,1,320,320]
-        # hm = self.init_conv_mask(mask_color)
 
-        hm = self.init_conv_mask(mask)
+        # mask = torch.cat([], dim=1)
+        # 颜色拮抗处理
+        # print(f"[mask] shape: {mask.shape}")
+        # print(f"[mask] resolution: {mask.shape[2]}x{mask.shape[3]} (HxW)")
+        # self.show_tensor_image(mask)
+        mask_color = self.color_opponency(mask)  # 打印颜色拮抗后的形状 [1,3,320,320]
+        # print(f"color_opponency 输出形状: {mask_color.shape}")  # 应该是 [1,3,320,320]
+        mask_color = self.color_adjust(mask_color)  # 打印通道调整后的形状 [1,1,320,320]
+        # print(f"color_adjust 输出形状: {mask_color.shape}")  # [1,1,320,320]
+        # self.show_tensor_image(mask_color)
+        hm = self.init_conv_mask(mask_color)
+        #self.show_tensor_image(hm)
+        #hm = self.init_conv_mask(mask)
+        # 纹理抑制
+        # hm = self.texture_suppressor(hm)
         # if self.cond_pe:
         #     m = self.cond_pos_embedding(m)
-        #X[1,3,80,80]-->[1,128,80,80]
+        # X[1,3,80,80]-->[1,128,80,80]
         x = self.init_conv(torch.cat([x, F.interpolate(hm[0], size=x.shape[-2:], mode="bilinear")], dim=1))
+
         r = x.clone()
 
-        t = self.time_mlp(torch.log(time)/4)
+        t = self.time_mlp(torch.log(time) / 4)
 
         h = []
         h2 = []
@@ -1085,41 +1293,39 @@ class Unet(nn.Module):
             hm2.append(hm[i].clone())
         # hm = []
         # hm2 = []
-        #[1, 128, 40, 40]-》[1, 256, 20, 20]-》[1, 512, 10, 10]-》[1, 512, 10, 10]
+        # [1, 128, 40, 40]-》[1, 256, 20, 20]-》[1, 512, 10, 10]-》[1, 512, 10, 10]
         for i, ((block1, block2, attn, downsample), relation_layer) \
                 in enumerate(zip(self.downs, self.relation_layers_down)):
             x = block1(x, t)
+            # save_feature_map(x, f'down_{i}/block1')
             h.append(x)
             h2.append(x.clone())
             # m = m_block(m, t)
             # hm.append(m)
             # hm2.append(m.clone())
-
             x = relation_layer(hm[i], x)
-
             x = block2(x, t)
             x = attn(x)
             h.append(x)
             h2.append(x.clone())
 
             x = downsample(x)
+            # save_feature_map(x, f'down_{i}/downsample')
             # m = m_downsample(m)
-
 
         # x = x + F.interpolate(hm[-1], size=x.shape[2:], mode="bilinear", align_corners=True)
         x = self.mid_block1(x, t)
         x = self.mid_attn(x)
         x = self.mid_block2(x, t)
-        # print("Input before FFt shape:", x.shape)
         x1 = x + self.decouple1(x)
         x2 = x + self.decouple2(x)
 
         x = x1
         for (block1, block2, attn, upsample), relation_layer in zip(self.ups, self.relation_layers_up):
-            x = torch.cat((x, h.pop()), dim = 1)
+            x = torch.cat((x, h.pop()), dim=1)
             x = block1(x, t)
             x = relation_layer(hm.pop(), x)
-            x = torch.cat((x, h.pop()), dim = 1)
+            x = torch.cat((x, h.pop()), dim=1)
             x = block2(x, t)
             x = attn(x)
             x = upsample(x)
@@ -1130,10 +1336,10 @@ class Unet(nn.Module):
 
         x = x2
         for (block1, block2, attn, upsample), relation_layer in zip(self.ups2, self.relation_layers_up2):
-            x = torch.cat((x, h2.pop()), dim = 1)
+            x = torch.cat((x, h2.pop()), dim=1)
             x = block1(x, t)
             x = relation_layer(hm2.pop(), x)
-            x = torch.cat((x, h2.pop()), dim = 1)
+            x = torch.cat((x, h2.pop()), dim=1)
             x = block2(x, t)
             x = attn(x)
             x = upsample(x)
@@ -1145,7 +1351,54 @@ class Unet(nn.Module):
         # scale_C = torch.exp(sigma)
         x1 = c_skip1 * x_clone + c_out1 * x1
         x2 = c_skip2 * x_clone + c_out2 * x2
+        #print(f"[Debug] x1 shape: {x1.shape}, numel: {x1.numel()}")
+        #print(f"[Debug] x2 shape: {x2.shape}, numel: {x2.numel()}")
+
+        #self.show_tensor_image(x1)
+        #self.show_tensor_image(x2)
+        # 最终输出
+        # save_feature_map(x1, 'output/x1')
+        # save_feature_map(x2, 'output/x2')
+        # return x1, x2, mask_color
         return x1, x2
+
+    def show_tensor_image(self, tensor):
+        # 处理 list 包装的情况
+        if isinstance(tensor, list):
+            if len(tensor) == 0:
+                raise ValueError("[show_tensor_image] Received an empty list.")
+            tensor = tensor[0]  # 提取第一个 tensor
+
+        if not isinstance(tensor, torch.Tensor):
+            raise TypeError(f"[show_tensor_image] Expected torch.Tensor but got {type(tensor)}")
+
+        img = tensor.detach().cpu().clone()
+
+        if img.ndim == 4:
+            img = img[0]  # [C, H, W]
+        elif img.ndim == 3:
+            pass
+        elif img.ndim == 2:
+            img = img.unsqueeze(0)  # [1, H, W]
+        else:
+            raise ValueError(f"[show_tensor_image] Unexpected tensor shape: {img.shape}")
+
+        if img.shape[0] == 1:
+            img = img.repeat(3, 1, 1)  # 转成 RGB
+        elif img.shape[0] != 3:
+            raise ValueError(f"[show_tensor_image] Unexpected channel size: {img.shape[0]}")
+
+        # 自动创建保存目录
+        save_dir = "./debug_images"
+        os.makedirs(save_dir, exist_ok=True)
+
+        # 自动编号避免覆盖
+        existing = glob.glob(os.path.join(save_dir, "debug_*.png"))
+        index = len(existing)
+        save_path = os.path.join(save_dir, f"debug_{index:03d}.png")
+
+        # 使用 torchvision 保存图像
+        save_image(img, save_path)
 
 
 if __name__ == "__main__":
@@ -1156,13 +1409,14 @@ if __name__ == "__main__":
     # y = effnet(x)
     model = Unet(dim=128, dim_mults=(1, 2, 4, 4),
                  cond_dim=128,
-                 cond_dim_mults=(2, 4, ),
+                 cond_dim_mults=(2, 4,),
                  channels=1,
                  window_sizes1=[[8, 8], [4, 4], [2, 2], [1, 1]],
                  window_sizes2=[[8, 8], [4, 4], [2, 2], [1, 1]],
                  cfg=fvcore.common.config.CfgNode({'cond_pe': False, 'input_size': [80, 80],
-                      'cond_feature_size': (32, 128), 'cond_net': 'swin',
-                      'num_pos_feats': 96})
+                                                   'cond_feature_size': (32, 128), 'cond_net': 'swin',
+                                                   'num_pos_feats': 96}),
+                 # debu g_mode=True
                  )
     x = torch.rand(1, 1, 80, 80)
     mask = torch.rand(1, 3, 320, 320)

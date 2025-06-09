@@ -135,6 +135,15 @@ def main(args):
     pass
 
 
+def get_gaussian_weight(h_crop, w_crop, device):
+    """生成 2D 高斯权重图：中心值大，边缘小"""
+    y = torch.linspace(-1, 1, steps=h_crop).view(-1, 1).expand(h_crop, w_crop)
+    x = torch.linspace(-1, 1, steps=w_crop).view(1, -1).expand(h_crop, w_crop)
+    dist = torch.sqrt(x ** 2 + y ** 2)
+    sigma = 0.5
+    weight = torch.exp(-0.5 * (dist / sigma) ** 2)
+    return weight.unsqueeze(0).unsqueeze(0).to(device)  # [1, 1, H, W]
+
 class Sampler(object):
     def __init__(
             self,
@@ -228,36 +237,98 @@ class Sampler(object):
         accelerator.print('sampling complete')
 
     # ----------------------------------waiting revision------------------------------------
+    # def slide_sample(self, inputs, crop_size, stride, mask=None):
+    #     """Inference by sliding-window with overlap.
+    #
+    #     If h_crop > h_img or w_crop > w_img, the small patch will be used to
+    #     decode without padding.
+    #
+    #     Args:
+    #         inputs (tensor): the tensor should have a shape NxCxHxW,
+    #             which contains all images in the batch.
+    #         batch_img_metas (List[dict]): List of image metainfo where each may
+    #             also contain: 'img_shape', 'scale_factor', 'flip', 'img_path',
+    #             'ori_shape', and 'pad_shape'.
+    #             For details on the values of these keys see
+    #             `mmseg/datasets/pipelines/formatting.py:PackSegInputs`.
+    #
+    #     Returns:
+    #         Tensor: The segmentation results, seg_logits from model of each
+    #             input image.
+    #     """
+    #
+    #     h_stride, w_stride = stride
+    #     h_crop, w_crop = crop_size
+    #     batch_size, _, h_img, w_img = inputs.size()
+    #     out_channels = 1
+    #     h_grids = max(h_img - h_crop + h_stride - 1, 0) // h_stride + 1
+    #     w_grids = max(w_img - w_crop + w_stride - 1, 0) // w_stride + 1
+    #     preds = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
+    #     aux_out1 = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
+    #     # aux_out2 = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
+    #     count_mat = inputs.new_zeros((batch_size, 1, h_img, w_img))
+    #     for h_idx in range(h_grids):
+    #         for w_idx in range(w_grids):
+    #             y1 = h_idx * h_stride
+    #             x1 = w_idx * w_stride
+    #             y2 = min(y1 + h_crop, h_img)
+    #             x2 = min(x1 + w_crop, w_img)
+    #             y1 = max(y2 - h_crop, 0)
+    #             x1 = max(x2 - w_crop, 0)
+    #             crop_img = inputs[:, :, y1:y2, x1:x2]
+    #
+    #             if isinstance(self.model, nn.parallel.DistributedDataParallel):
+    #                 crop_seg_logit = self.model.module.sample(batch_size=1, cond=crop_img, mask=mask)
+    #                 e1 = e2 = None
+    #                 aux_out = None
+    #             elif isinstance(self.model, nn.Module):
+    #                 crop_seg_logit = self.model.sample(batch_size=1, cond=crop_img, mask=mask)
+    #                 e1 = e2 = None
+    #                 aux_out = None
+    #             else:
+    #                 raise NotImplementedError
+    #             preds += F.pad(crop_seg_logit,
+    #                            (int(x1), int(preds.shape[3] - x2), int(y1),
+    #                             int(preds.shape[2] - y2)))
+    #             if aux_out is not None:
+    #                 aux_out1 += F.pad(aux_out,
+    #                                (int(x1), int(aux_out1.shape[3] - x2), int(y1),
+    #                                 int(aux_out1.shape[2] - y2)))
+    #
+                #patch中的所有点都一视同仁（边缘和中心的叠加权重没有差别）导致拼接重叠部分出现问题
+    #             count_mat[:, :, y1:y2, x1:x2] += 1
+    #     assert (count_mat == 0).sum() == 0
+    #     # torch.save(count_mat, '/home/yyf/Workspace/edge_detection/codes/Mask-Conditioned-Latent-Space-Diffusion/checkpoints/count.pt')
+    #     seg_logits = preds / count_mat
+    #     aux_out1 = aux_out1 / count_mat
+    #     # aux_out2 = aux_out2 / count_mat
+    #     if aux_out is not None:
+    #         return seg_logits, aux_out1
+    #     return seg_logits
+
     def slide_sample(self, inputs, crop_size, stride, mask=None):
-        """Inference by sliding-window with overlap.
-
-        If h_crop > h_img or w_crop > w_img, the small patch will be used to
-        decode without padding.
-
-        Args:
-            inputs (tensor): the tensor should have a shape NxCxHxW,
-                which contains all images in the batch.
-            batch_img_metas (List[dict]): List of image metainfo where each may
-                also contain: 'img_shape', 'scale_factor', 'flip', 'img_path',
-                'ori_shape', and 'pad_shape'.
-                For details on the values of these keys see
-                `mmseg/datasets/pipelines/formatting.py:PackSegInputs`.
-
-        Returns:
-            Tensor: The segmentation results, seg_logits from model of each
-                input image.
         """
-
+        使用滑动窗口带重叠做推理，利用高斯权重平滑融合结果。
+        inputs: tensor NxCxHxW
+        crop_size: (h_crop, w_crop)
+        stride: (h_stride, w_stride)
+        mask: optional mask tensor
+        返回：融合后的分割结果，shape Nx1xHxW
+        """
         h_stride, w_stride = stride
         h_crop, w_crop = crop_size
         batch_size, _, h_img, w_img = inputs.size()
-        out_channels = 1
+        out_channels = 1  # 假设输出通道为1，可根据需要修改
+
+        preds = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
+        count_mat = inputs.new_zeros((batch_size, 1, h_img, w_img))
+
+        # 生成高斯权重图，大小为裁剪窗口大小
+        weight_map = get_gaussian_weight(h_crop, w_crop, inputs.device)  # [1,1,h_crop,w_crop]
+
         h_grids = max(h_img - h_crop + h_stride - 1, 0) // h_stride + 1
         w_grids = max(w_img - w_crop + w_stride - 1, 0) // w_stride + 1
-        preds = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
-        aux_out1 = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
-        # aux_out2 = inputs.new_zeros((batch_size, out_channels, h_img, w_img))
-        count_mat = inputs.new_zeros((batch_size, 1, h_img, w_img))
+
         for h_idx in range(h_grids):
             for w_idx in range(w_grids):
                 y1 = h_idx * h_stride
@@ -266,34 +337,32 @@ class Sampler(object):
                 x2 = min(x1 + w_crop, w_img)
                 y1 = max(y2 - h_crop, 0)
                 x1 = max(x2 - w_crop, 0)
-                crop_img = inputs[:, :, y1:y2, x1:x2]
 
-                if isinstance(self.model, nn.parallel.DistributedDataParallel):
+                crop_img = inputs[:, :, y1:y2, x1:x2]  # [B,C,h_crop_real,w_crop_real]
+
+                # 模型预测
+                if isinstance(self.model, torch.nn.parallel.DistributedDataParallel):
                     crop_seg_logit = self.model.module.sample(batch_size=1, cond=crop_img, mask=mask)
-                    e1 = e2 = None
-                    aux_out = None
-                elif isinstance(self.model, nn.Module):
+                elif isinstance(self.model, torch.nn.Module):
                     crop_seg_logit = self.model.sample(batch_size=1, cond=crop_img, mask=mask)
-                    e1 = e2 = None
-                    aux_out = None
                 else:
                     raise NotImplementedError
-                preds += F.pad(crop_seg_logit,
-                               (int(x1), int(preds.shape[3] - x2), int(y1),
-                                int(preds.shape[2] - y2)))
-                if aux_out is not None:
-                    aux_out1 += F.pad(aux_out,
-                                   (int(x1), int(aux_out1.shape[3] - x2), int(y1),
-                                    int(aux_out1.shape[2] - y2)))
 
-                count_mat[:, :, y1:y2, x1:x2] += 1
-        assert (count_mat == 0).sum() == 0
-        # torch.save(count_mat, '/home/yyf/Workspace/edge_detection/codes/Mask-Conditioned-Latent-Space-Diffusion/checkpoints/count.pt')
+                # 实际裁剪区域大小
+                _, _, h_crop_real, w_crop_real = crop_img.size()
+                # 对应权重区域裁剪
+                weight_map_crop = weight_map[:, :, :h_crop_real, :w_crop_real]  # [1,1,h_crop_real,w_crop_real]
+                # 加权预测
+                weighted_crop = crop_seg_logit * weight_map_crop
+                # 累加加权预测结果
+                preds[:, :, y1:y2, x1:x2] += weighted_crop
+                # 累加权重（计数矩阵）
+                count_mat[:, :, y1:y2, x1:x2] += weight_map_crop
+
+        # 避免除0
+        count_mat = torch.where(count_mat == 0, torch.ones_like(count_mat), count_mat)
         seg_logits = preds / count_mat
-        aux_out1 = aux_out1 / count_mat
-        # aux_out2 = aux_out2 / count_mat
-        if aux_out is not None:
-            return seg_logits, aux_out1
+
         return seg_logits
 
     def whole_sample(self, inputs, raw_size, mask=None):

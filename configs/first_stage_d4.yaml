@@ -22,7 +22,7 @@ data:
   name: edge
   img_folder: '/home/rtcai/Diffusion/data/train/'
   augment_horizontal_flip: True
-  batch_size: 2
+  batch_size: 1
 
 trainer:
   gradient_accumulate_every: 2

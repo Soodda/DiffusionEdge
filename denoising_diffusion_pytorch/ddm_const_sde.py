@@ -1,4 +1,6 @@
 import torch
+import os, glob
+from torchvision.utils import save_image
 import torch.nn as nn
 from torch.cuda.amp import custom_bwd, custom_fwd
 import math
@@ -499,6 +501,7 @@ class DDPM(nn.Module):
         # times = list(reversed(times.int().tolist()))
         # time_pairs = list(zip(times[:-1], times[1:]))
         # time_steps = torch.tensor([0.25, 0.15, 0.1, 0.1, 0.1, 0.09, 0.075, 0.06, 0.045, 0.03])
+        print(f"[Debug] Received shape in sample_fn: {shape}")
         step = 1. / self.sampling_timesteps
         # time_steps = torch.tensor([0.1]).repeat(10)
         time_steps = torch.tensor([step]).repeat(self.sampling_timesteps)
@@ -652,8 +655,11 @@ class LatentDiffusion(DDPM):
         # else:
         #     x, cond = batch.values()
         x = batch['image']
+        self.show_tensor_image(x)
         cond = batch['cond'] if 'cond' in batch else None
+        self.show_tensor_image(cond)
         z = self.first_stage_model.encode(x) #获取VAE的输出
+        self.show_tensor_image(z)
         # print('zzzz', z.shape)
         z = self.get_first_stage_encoding(z) #采样AVE输出 得到分布Z
         out = [z, cond, x]
@@ -662,10 +668,13 @@ class LatentDiffusion(DDPM):
             out.extend([x, xrec])
         if return_original_cond:
             out.append(cond)
+        self.show_tensor_image(out)
         return out
 
     def training_step(self, batch):
         z, c, *_ = self.get_input(batch) #潜在表示z 条件输入c
+        # self.show_tensor_image(z)
+        # self.show_tensor_image(c)
         # print(_[0].shape)
         if self.scale_by_softsign:
             z = F.softsign(z)
@@ -694,6 +703,7 @@ class LatentDiffusion(DDPM):
         epsilon = torch.randn_like(mean, device=xt.device) #采样随机噪声
         sigma = torch.sqrt(s * (time-s) / time) #计算前一个时间步潜在表示的标准差
         xtms = mean + sigma * epsilon
+        #self.show_tensor_image(xtms)#噪声
         return xtms
 
     def WCE_loss(self, prediction, labelf, beta=1.1):
@@ -860,6 +870,7 @@ class LatentDiffusion(DDPM):
             batch_size = cond.shape[0]
         down_ratio = self.first_stage_model.down_ratio
         if self.cfg.model_name == 'cond_unet8' or self.cfg.model_name == 'cond_unet13':
+
             z, aux_out = self.sample_fn((batch_size, channels, image_size[0] // down_ratio, image_size[1] // down_ratio),
                                up_scale=up_scale, unnormalize=False, cond=cond, denoise=denoise)
         else:
@@ -962,6 +973,44 @@ class LatentDiffusion(DDPM):
             return img, aux_out
         return img
 
+    def show_tensor_image(self, tensor):
+        # 处理 list 包装的情况
+        if isinstance(tensor, list):
+            if len(tensor) == 0:
+                raise ValueError("[show_tensor_image] Received an empty list.")
+            tensor = tensor[0]  # 提取第一个 tensor
+
+        if not isinstance(tensor, torch.Tensor):
+            raise TypeError(f"[show_tensor_image] Expected torch.Tensor but got {type(tensor)}")
+
+        img = tensor.detach().cpu().clone()
+
+        if img.ndim == 4:
+            img = img[0]  # [C, H, W]
+        elif img.ndim == 3:
+            pass
+        elif img.ndim == 2:
+            img = img.unsqueeze(0)  # [1, H, W]
+        else:
+            raise ValueError(f"[show_tensor_image] Unexpected tensor shape: {img.shape}")
+
+        if img.shape[0] == 1:
+            img = img.repeat(3, 1, 1)  # 转成 RGB
+        elif img.shape[0] != 3:
+            raise ValueError(f"[show_tensor_image] Unexpected channel size: {img.shape[0]}")
+
+        # 自动创建保存目录
+        save_dir = "./debug_sde_images"
+        os.makedirs(save_dir, exist_ok=True)
+
+        # 自动编号避免覆盖
+        existing = glob.glob(os.path.join(save_dir, "debug_*.png"))
+        index = len(existing)
+        save_path = os.path.join(save_dir, f"debug_{index:03d}.png")
+
+        # 使用 torchvision 保存图像
+        save_image(img, save_path)
+
 class SpecifyGradient(torch.autograd.Function):
     @staticmethod
     @custom_fwd
@@ -976,6 +1025,9 @@ class SpecifyGradient(torch.autograd.Function):
         (gt_grad,) = ctx.saved_tensors
         gt_grad = gt_grad * grad_scale
         return gt_grad, None
+
+
+
 
 if __name__ == "__main__":
     ddconfig = {'double_z': True,
